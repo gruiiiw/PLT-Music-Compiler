@@ -6,18 +6,15 @@ IDENTIFIER = ['A-Z']['a-z']*
 OPERATORS = ["="]
 NOTE = [("A-G")(1-8)("whqes")]
 WHITESPACE = ['\n', '\t', ' ']
-DELIMITER = [":","(", ")", ',']
+DELIMITER = [":","(", ")", '{', '}']
 
+# TODO build state machine matrix
 
-# TODO create a list of regular expressions
-
-# TODO scanning algorithm 
+# TODO executre scanning algorithm to produce error or lexical tokens
 
 # TODO a. Scan the input programs written in your language and output a list of tokens in the following format: <Token Type, Token Value>.
 def scan():
     pass
-
-# TODO Show state transitions DFA (put in in a matrix)
 
 # TODO handle lexical errors 
 def handleErrors():

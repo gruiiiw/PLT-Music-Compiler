@@ -14,7 +14,7 @@ IDENTIFIER = ['A-Z']['a-z']*
 OPERATORS = ["="]
 NOTE = [("A-G")(1-8)("whqes")]
 WHITESPACE = ['\n', '\t', ' ']
-DELIMITER = [":","(", ")", ',']
+DELIMITER = [":","(", ")", '{', '}']
 
 
 ## Shell Script to Execute Lexer
