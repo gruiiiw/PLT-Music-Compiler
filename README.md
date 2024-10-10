@@ -6,13 +6,16 @@ Define the lexical grammar for your language, ensuring each token and its rules 
 documented in a README file. Design the lexical grammar that has at least 5 different
 token types.
 
-NOTE: [A-G] <br>
-OCTAVE: [1-8] <br>
-// maybe get rid of this CHORD: Represented by [major | minor | augmented | diminished] // lowercase so it doesn't overlap with note <br>
-REST: Represented by [R] // nothing else starts with R, so if R, token will be rest? <br>
-LENGTH: [ w | h | q | e | s ] // lowercase to not clash with Note <br>
-REPEAT: Number followed by "times:" <br>
-COLON: ":" <br>
+
+# Regular Expresions for Lexical Grammer
+KEYWORD = ["times", "play"]
+NUMBERS = [0-9]
+IDENTIFIER = ['A-Z']['a-z']*
+OPERATORS = ["="]
+NOTE = [("A-G")(1-8)("whqes")]
+WHITESPACE = ['\n', '\t', ' ']
+DELIMITER = [":","(", ")", '{', '}']
+
 
 Happy = [A-Z][a-z]* - Identifier
 
@@ -30,7 +33,5 @@ Installation Steps <br>
 Grace Dong grd2120 <br>
 Ben Cyna bc3096 
 
-
-(A4 B3 D6)sixteenth  
 
 

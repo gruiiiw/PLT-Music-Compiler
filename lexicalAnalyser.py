@@ -1,13 +1,20 @@
-# TODO define all Identifiers, Operators, Keywords, Operators, Delimiters, And whitespace and add it to the readme, also have it in table
+# TODO define all Identifiers, Operators, Keywords, Delimiters, And whitespace and add it to the readme, also have it in table
 
+KEYWORD = ["times", "play"]
+NUMBERS = [0-9]
+IDENTIFIER = ['A-Z']['a-z']*
+OPERATORS = ["="]
+NOTE = [("A-G")(1-8)("whqes")]
+WHITESPACE = ['\n', '\t', ' ']
+DELIMITER = [":","(", ")", '{', '}']
 
-# TODO scanning algorithm 
+# TODO build state machine matrix
+
+# TODO executre scanning algorithm to produce error or lexical tokens
 
 # TODO a. Scan the input programs written in your language and output a list of tokens in the following format: <Token Type, Token Value>.
 def scan():
     pass
-
-# TODO Show state transitions DFA (put in in a matrix)
 
 # TODO handle lexical errors 
 def handleErrors():
