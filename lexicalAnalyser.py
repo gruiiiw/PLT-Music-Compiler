@@ -1,5 +1,15 @@
-# TODO define all Identifiers, Operators, Keywords, Operators, Delimiters, And whitespace and add it to the readme, also have it in table
+# TODO define all Identifiers, Operators, Keywords, Delimiters, And whitespace and add it to the readme, also have it in table
 
+KEYWORD = ["times", "play"]
+NUMBERS = [0-9]
+IDENTIFIER = ['A-Z']['a-z']*
+OPERATORS = ["="]
+NOTE = [("A-G")(1-8)("whqes")]
+WHITESPACE = ['\n', '\t', ' ']
+DELIMITER = [":","(", ")", ',']
+
+
+# TODO create a list of regular expressions
 
 # TODO scanning algorithm 
 
