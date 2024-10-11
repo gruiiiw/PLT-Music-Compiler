@@ -1,5 +1,6 @@
-# TODO define all Identifiers, Operators, Keywords, Delimiters, And whitespace and add it to the readme, also have it in table
+import re
 
+# define all Identifiers, Operators, Keywords, Delimiters, And whitespace and add it to the readme, also have it in table
 KEYWORD = ["times", "play"]
 NUMBERS = [0-9]
 IDENTIFIER = ['A-Z']['a-z']*
@@ -9,6 +10,9 @@ WHITESPACE = ['\n', '\t', ' ']
 DELIMITER = [":","(", ")", '{', '}']
 
 # TODO build state machine matrix
+STATE = [
+    [0]
+]
 
 # TODO executre scanning algorithm to produce error or lexical tokens
 
