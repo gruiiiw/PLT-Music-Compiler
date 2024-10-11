@@ -32,6 +32,12 @@ def getStateCode(value):
     if re.match(r'[A-Za-z]', value):
         return 6
     
+    if re.match(r'[tp]', value):
+        return 7
+    
+    if re.match(r'[H-Z]', value):
+        return 8
+    
 
 # TODO executre scanning algorithm to produce error or lexical tokens
 
