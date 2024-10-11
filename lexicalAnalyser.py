@@ -10,9 +10,28 @@ WHITESPACE = ['\n', '\t', ' ']
 DELIMITER = [":","(", ")", '{', '}']
 
 # TODO build state machine matrix
-STATE = [
-    [0]
-]
+def getStateCode(value):
+    if re.match(r'[A-G]', value):
+        return 0
+    
+    if re.match(r'[1-8]', value):
+        return 1
+    
+    if re.match(r'[whqes]', value):
+        return 2
+    
+    if re.match(r'[\n]', value):
+        return 3
+    
+    if re.match(r'[():{}]', value):
+        return 4
+    
+    if re.match(r'[=]', value):
+        return 5
+    
+    if re.match(r'[A-Za-z]', value):
+        return 6
+    
 
 # TODO executre scanning algorithm to produce error or lexical tokens
 
