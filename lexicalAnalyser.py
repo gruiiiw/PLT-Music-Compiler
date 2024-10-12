@@ -4,7 +4,7 @@ KEYWORD = ["times", "play"]
 NUMBERS = [0-9]
 IDENTIFIER = ['A-Z']['a-z']*
 OPERATORS = ["="]
-NOTE = [("A-G")(1-8)("whqes")]
+NOTE = [A-G][1-8][w|h|q|e|s]
 WHITESPACE = ['\n', '\t', ' ']
 DELIMITER = [":","(", ")", '{', '}']
 

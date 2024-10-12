@@ -17,11 +17,13 @@ WHITESPACE = ['\n', '\t', ' ']
 DELIMITER = [":","(", ")", '{', '}']
 
 
+Happy = [A-Z][a-z]* - Identifier
+
+
 ## Shell Script to Execute Lexer
 Installation Steps <br>
 
 ** Do not assume anything. We could be running it on a system without python. The easiest way to sort out this requirement would be to add a Dockerfile with all the build steps, that can be run on any system.
-
 
 
 ## Steps
