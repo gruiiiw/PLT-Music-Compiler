@@ -11,7 +11,7 @@ DELIMITER = [":","(", ")", '{', '}']
 
 # TODO build state machine matrix
 def getStateCode(value):
-    if re.match(r'[A-G]', value):
+    if re.match(r'[A-G]', value): # we're not allowed to use the regular expression library unfortunately
         return 0
     
     if re.match(r'[1-8]', value):
