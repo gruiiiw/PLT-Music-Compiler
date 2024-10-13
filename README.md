@@ -16,6 +16,12 @@ NOTE = [("A-G")(1-8)("whqes")]
 WHITESPACE = ['\n', '\t', ' ']
 DELIMITER = [":","(", ")", '{', '}']
 
+vairbale_name= 
+
+2times {
+    play ( A4w )
+}
+
 
 Happy = [A-Z][a-z]* - Identifier
 
