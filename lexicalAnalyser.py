@@ -1,6 +1,6 @@
 from Parser import Parser
-data = "Kbcdj = A4w"
-data2 = "9 times"
+data = "Abcdj = A4w"
+data2 = "9 times: { play (A4w) }"
 
 parser = Parser()
 lexical_analysis = parser.scan(data)
