@@ -1,11 +1,12 @@
 from Parser import Parser
-data = "times A4 = 4 play A4"
+data = "Abcdj = A4w"
 
 parser = Parser()
 lexical_analysis = parser.scan(data)
 
 print(lexical_analysis)   
-    
+
+
 
 # TODO Provide 5 sample input programs
 

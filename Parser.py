@@ -16,7 +16,7 @@ class Parser:
             [33,     33,        2,     33,                33,         33,          33,           33,        33,          33,       33,     33,      33,      33,    33,  33,   33,  33,   33,  33, 33, 33],#q1 
             [3,     33,        33,     0,                 33,         33,          33,           33,        33,          33,       33,     33,      33,      33,    33,  33,   33,  33,   33,  33, 33, 33],#q2 NOTE accept state (program can terminate if here)
             [33,     1,        33,     33,                33,         33,          33,           33,        33,          33,       33,     33,      33,      33,    33,  33,   33,  33,   33,  33, 33, 33],#q3 start of note
-            [33,     33,        33,     33,                33,         33,          33,           33,        33,          4,       33,     33,      33,      4,    4,  4,   4,  4,   4,  4, 4, 4],#q4 identifier
+            [33,     33,        33,     33,                33,         6,          33,           33,        33,          4,       33,     33,      33,      4,    4,  4,   4,  4,   4,  4, 4, 4],#q4 identifier
             [33,     33,        33,     33,                33,         33,          33,           33,        33,          4,       33,     33,      33,      4,    4,  4,   4,  4,   4,  4, 4, 4],#q5
             [3,      33,        33,     33,                33,         33,          33,           33,        33,          33,       33,     33,      33,      33,    33,  33,   33,  33,   33,  33, 33, 33],#q6 operator 
             [33,     33,        33,     33,                33,         33,          33,           33,        33,          33,       33,     33,      33,      33,    33,  33,   33,  33,   33,  33, 33, 33],#q7 i didnt include q7 on my state machine my b
@@ -44,12 +44,12 @@ class Parser:
             [33,     33,        33,     33,                33,         33,          33,           33,        33,          33,       33,     33,      33,      33,    33,  33,   33,  33,   33,  33, 33, 33],#q30
             [33,     33,        33,     33,                33,         33,          33,           33,        33,          33,       33,     33,      33,      33,    33,  33,   33,  33,   33,  33, 33, 33],#q31
             [33,     33,        33,     33,                33,         33,          33,           33,        33,          33,       33,     33,      33,      33,    33,  33,   33,  33,   33,  33, 33, 33],#q32
-            [33,     33,        33,     33,                33,         33,          33            33,        33,           33,       33,     33,     33,      33,    33,  33,   33,  33,   33,  33, 33, 33]#q33 Error state. Return lexical error if we get here
+            [33,     33,        33,     33,                33,         33,          33,            33,        33,           33,       33,     33,     33,      33,    33,  33,   33,  33,   33,  33, 33, 33]#q33 Error state. Return lexical error if we get here
         ]
-        
+        return state_machine
         
     # TODO build state machine matrix
-    def getStateCode(value):
+    def getStateCode(self, value):
           # p 13, 
         if value == "p":
             return 13
@@ -124,6 +124,7 @@ class Parser:
         return 33
         
     def scan(self, string):
+        prev_state = 0
         lexical_analysis = []
         cur_seq = []
         cur_state = 0
@@ -132,20 +133,24 @@ class Parser:
                 continue
             
             if cur_state in self.token_states_arrive:
-                lexical_analysis.append(self.token_states_arrive[cur_state], "".join(cur_seq))
+                lexical_analysis.append((self.token_states_arrive[cur_state], "".join(cur_seq)))
                 cur_seq = []
             
             cur_seq.append(char)
             
+            # print(cur_state, char)
+            prev_state = cur_state
             cur_state = self.stateMachine[cur_state][self.getStateCode(char)]
             
             if cur_state == 33:
+                print(prev_state)
                 return self.handleErrors(f"Invalid character {char}")
             
             if cur_state in self.token_states_leave:
-                lexical_analysis.append(self.token_states_leave[cur_state], "".join(cur_seq))
+                lexical_analysis.append((self.token_states_leave[cur_state], "".join(cur_seq)))
                 cur_seq = []
-        
+
+            
         if cur_state in self.final_states:
             return lexical_analysis
         
