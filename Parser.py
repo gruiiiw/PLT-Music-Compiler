@@ -43,9 +43,116 @@ class Parser:
             [33,     33,        33,     33,                33,         33,          33,           33,        33,          33,       33,     33,      33,      33,    33,  33,   33,  33,   33,  33, 33, 33],#q32
             [33,     33,        33,     33,                33,         33,          33            33,        33,           33,       33,     33,     33,      33,    33,  33,   33,  33,   33,  33, 33, 33]#q33 Error state. Return lexical error if we get here
         ]
+        return state_machine
+        
+    # TODO build state machine matrix
+    def getStateCode(self, value):
+          # p 13, 
+        if value == "p":
+            return 13
+        
+        if value == "l":
+            return 14
+        if value == "a":
+            return 15
+        if value == "y":
+            return 16
+        if value == "t":
+            return 17
+        if value == "i":
+            return 18
+        if value == "m":
+            return 19
+        if value == "e":
+            return 20
+        if value == "s":
+            return 21
         
         
+        if value in "ABCDEFG":
+            return 0
         
-    def get_next_state(self):
-        pass
+        if value.isdigit() and int(value) in range(1, 9):
+            return 1
+        
+        #whqes 2
+        if value in "whqes":
+            return 2
+        
+        # , whitespace\n 
+        if value in "\n\t ":
+            return 3
+        
+        # 4, delimiter 
+        if value in ":(){}":
+            return 4
+        
+        # 5, operator 
+        if value == "=":
+            return 5
+        
+        # identifier 6 skip 
+        
+        # [H-Z] 7 
+        if value in "HIJKLMNOPQRSTUVWXYZ":
+            return 7
+        
+        # , keyword 8,  skip 
+        
+        # id[a-z] 9   
+        if value in "abcdefghijklmnopqrstuvwxyz":
+            return 9
+        
+        # ( 10   
+        if value == '(':
+            return 10
+        
+        
+        # 0 11   
+        if value == "(":
+            return 11 
+        
+        
+        # [0-9] 12    
+        if value.isdigit():
+            return 12
+        
+        return 33
+        
+    def scan(self, string):
+        prev_state = 0
+        lexical_analysis = []
+        cur_seq = [] 
+        cur_state = 0
+        for char in string:
+            if char == ' ':
+                continue
+            
+            if cur_state in self.token_states_arrive: 
+                lexical_analysis.append((self.token_states_arrive[cur_state], "".join(cur_seq)))
+                cur_seq = []
+            
+            cur_seq.append(char)
+            
+            # print(cur_state, char)
+            prev_state = cur_state 
+            cur_state = self.stateMachine[cur_state][self.getStateCode(char)]
+            
+            if cur_state == 33:
+                print(prev_state)
+                return self.handleErrors(f"Invalid character {char}")
+            
+            if cur_state in self.token_states_leave:
+                lexical_analysis.append((self.token_states_leave[cur_state], "".join(cur_seq)))
+                cur_seq = []
+
+            
+        if cur_state in self.final_states:
+            return lexical_analysis
+        
+        return self.handleErrors("Not in a ending final state")
+                
+                
     
+    def handleErrors(self, err):
+        return [err]
