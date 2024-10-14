@@ -61,12 +61,42 @@ class LexerDfa:
       elif self.cur_char in "HIJKLMNOPQRSTUVWXYZ":
         #This means its a variable token
         self.advance()
+
       
       elif self.cur_char == 'p': # Play KeywordToken - play ( A4w ) followed by note or iD 
         self.advance()
+        if self.cur_char == "l":
+          self.advance()
+          if self.cur_char == "a":
+            self.advance()
+            if self.cur_char == "y":
+              self.advance()
+              if self.cur_char == "(":
+                self.advance()
+                if self.cur_char in "ABCDEFG":
+                  if self.parse_note_token():
+                    continue
+                  self.advance()
+                if self.cur_char == ")":
+                  self.advance()
+                  self.tokens.append(("Keyword", "play"))
+                  continue
       
-      elif self.cur_char == 't': # 5 Times KeywordToken /Integer
+      elif self.cur_char.isdigit(): # 5 Times KeywordToken /Integer 5 times { play (A4w) }
+        self.tokens.append(("INTEGER", self.cur_char))
         self.advance()
+        if self.cur_char == "t":
+          self.advance()
+          if self.cur_char == "i":
+            self.advance()
+            if self.cur_char == "m":
+              self.advance()
+              if self.cur_char == "e":
+                self.advance()
+                if self.cur_char == "s":
+                  self.advance()
+                  self.tokens.append(("Keyword", "times"))
+                  continue
 
 
         
@@ -74,7 +104,7 @@ class LexerDfa:
     return self.tokens
 
 # Test the lexer
-lexer_Dfa = LexerDfa("Aariable= A4w B4h C4q") 
+lexer_Dfa = LexerDfa("Aariable= A4w B4h C4q 5times") 
 lexer_Dfa.run()
 tokens = lexer_Dfa.get_tokens()
 
