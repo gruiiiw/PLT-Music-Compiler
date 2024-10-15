@@ -4,8 +4,8 @@ class LexerDfa:
     self.position = 0
     self.cur_char = input_str[self.position] if input_str else None
     self.tokens = []
+    self.errors = [] # List of errors 
     self.prev_char = None  
-
 
   def advance(self):
     self.prev_char = self.cur_char
@@ -27,6 +27,10 @@ class LexerDfa:
               self.tokens.append(("NOTE", ''.join(Token)))  # End of Note Token
               self.advance() # maybe leave the advance outside of the def
               return True  # Note parsed
+          else:
+            self.errors.append("Error: Invalid note token, missing duration w, h, q, e, s")
+      elif self.cur_char not in "abcdefghijklmnopqrstuvwxyz":
+          self.errors.append("Error: Invalid note token, missing octave number 1-8")
       return False  # Note not parsed * maybe print an error message
     
   def variable_token(self):
@@ -61,11 +65,13 @@ class LexerDfa:
         if self.cur_char.isspace():
             self.advance()
             continue
-        if self.note_token(): # note 
+        elif self.note_token(): # note 
           continue
         elif self.cur_char in "abcdefghijklmnopqrstuvwxyz": # then its part of a variable 
           if self.variable_token():
             continue
+        else:
+          break
 
       if self.cur_char in "HIJKLMNOPQRSTUVWXYZ": 
         #This means its a variable token
@@ -145,18 +151,26 @@ class LexerDfa:
         
   def get_tokens(self):
     return self.tokens
+  def get_errors(self):
+    return self.errors
 
 # Test the lexer (5 sample input programs)
-lexer_Dfa1 = LexerDfa("""Variable= A4w B3h C3q
+lexer_Dfa1 = LexerDfa("""Variable= A4w B3h C3 C3
                         5times{play(A4w)}""")  # B3h is being stopped, can't play more than 1 note rn
 lexer_Dfa1.run()
 tokens_1 = lexer_Dfa1.get_tokens()
+errors_1 = lexer_Dfa1.get_errors()
 
 for token in tokens_1:
   print(token)
 
-lexer_DFA2 = LexerDfa("""Happy= A4w
-                         Birthday= B3h""")
+if errors_1:
+    print("Errors encountered:")
+    for error in errors_1:
+        print(error)
+
+
+lexer_DFA2 = LexerDfa("""Happy= A4w Birthday= B3h""")
 lexer_DFA2.run()
 tokens_2 = lexer_DFA2.get_tokens()
 
