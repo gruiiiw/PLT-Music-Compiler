@@ -43,7 +43,7 @@ class LexerDfa:
         self.advance()
     if self.cur_char.isspace():
         self.advance()
-    while self.cur_char in "ABCDEFG":
+    while self.cur_char in "ABCDEFG": # this should be calling note_token i think
         if self.cur_char.isspace():
             self.advance()
             continue
@@ -136,7 +136,7 @@ class LexerDfa:
                                     self.advance()
                                     self.tokens.append(("Keyword", "}")) # 
                                     continue # This is an accept state
-                              elif #found variable:
+                              # elif found variable:
 
 
         
@@ -145,14 +145,14 @@ class LexerDfa:
 
 # Test the lexer (5 sample input programs)
 lexer_Dfa1 = LexerDfa("""Variable= A4w 
-                        5times{play(A4w B3h)}""")  # B3h is being stopped
+                        5times{play(A4w)}""")  # B3h is being stopped, can't play more than 1 note rn
 lexer_Dfa1.run()
 tokens_1 = lexer_Dfa1.get_tokens()
 
-for token in tokens:
+for token in tokens_1:
   print(token)
 
-lexer_DFA2 = LexerDfa("Happy = A4w")
+lexer_DFA2 = LexerDfa("Happy= A4w")
 lexer_DFA2.run()
 tokens_2 = lexer_DFA2.get_tokens()
 
