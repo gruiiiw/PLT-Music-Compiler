@@ -25,7 +25,7 @@ class LexerDfa:
           if self.cur_char in "whqes":
               Token.append(self.cur_char)
               self.tokens.append(("NOTE", ''.join(Token)))  # End of Note Token
-              self.advance()
+              self.advance() # maybe leave the advance outside of the def
               return True  # Note parsed
       return False  # Note not parsed * maybe print an error message
     
@@ -49,7 +49,7 @@ class LexerDfa:
             continue
         if self.note_token():
             continue
-        self.advance()
+        self.advance() # maybe leave the advance outside of the def
 
  
   def run(self):
@@ -124,18 +124,18 @@ class LexerDfa:
                             self.tokens.append(("Keyword", "play"))
                             if self.cur_char == "(":
                               self.advance()
-                              self.tokens.append(("Delimiter", "("))
-                              if self.cur_char in "ABCDEFG":
+                              self.tokens.append(("Delimiter", "(")) # if found two in a row, can print ignored error?
+                              while self.cur_char in "ABCDEFG":
                                 if self.note_token():
                                   print("note")
-                                  # continue
+                                  
                               if self.cur_char == ")":
                                 self.advance()
                                 self.tokens.append(("Delimiter", ")"))
                                 if self.cur_char == "}":
                                   self.advance()
-                                  self.tokens.append(("Keyword", "}"))
-                                  continue
+                                  self.tokens.append(("Keyword", "}")) # 
+                                  continue # This is an accept state
 
 
         
@@ -143,7 +143,8 @@ class LexerDfa:
     return self.tokens
 
 # Test the lexer
-lexer_Dfa = LexerDfa("Variable= A4w 5times{play(A4w)}") 
+lexer_Dfa = LexerDfa("""Variable= A4w 
+                        5times{play(A4w B3h)}""")  # B3h is being stopped
 lexer_Dfa.run()
 tokens = lexer_Dfa.get_tokens()
 
