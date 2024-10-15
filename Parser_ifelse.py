@@ -125,28 +125,36 @@ class LexerDfa:
                             if self.cur_char == "(":
                               self.advance()
                               self.tokens.append(("Delimiter", "(")) # if found two in a row, can print ignored error?
-                              while self.cur_char in "ABCDEFG":
+                              if self.cur_char in "ABCDEFG": # Found note 
                                 if self.note_token():
                                   print("note")
-                                  
-                              if self.cur_char == ")":
-                                self.advance()
-                                self.tokens.append(("Delimiter", ")"))
-                                if self.cur_char == "}":
+                                
+                                if self.cur_char == ")": 
                                   self.advance()
-                                  self.tokens.append(("Keyword", "}")) # 
-                                  continue # This is an accept state
+                                  self.tokens.append(("Delimiter", ")"))
+                                  if self.cur_char == "}":
+                                    self.advance()
+                                    self.tokens.append(("Keyword", "}")) # 
+                                    continue # This is an accept state
+                              elif #found variable:
 
 
         
   def get_tokens(self):
     return self.tokens
 
-# Test the lexer
-lexer_Dfa = LexerDfa("""Variable= A4w 
+# Test the lexer (5 sample input programs)
+lexer_Dfa1 = LexerDfa("""Variable= A4w 
                         5times{play(A4w B3h)}""")  # B3h is being stopped
-lexer_Dfa.run()
-tokens = lexer_Dfa.get_tokens()
+lexer_Dfa1.run()
+tokens_1 = lexer_Dfa1.get_tokens()
 
 for token in tokens:
+  print(token)
+
+lexer_DFA2 = LexerDfa("Happy = A4w")
+lexer_DFA2.run()
+tokens_2 = lexer_DFA2.get_tokens()
+
+for token in tokens_2:
   print(token)
