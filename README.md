@@ -14,9 +14,9 @@ IDENTIFIER = ['A-Z']['a-z']*
 OPERATORS = ["="]
 NOTE = [("A-G")(1-8)("whqes")]
 WHITESPACE = ['\n', '\t', ' ']
-DELIMITER = [":","(", ")", '{', '}']
+DELIMITER = [":","(", ")", '{', '}'] # maybe get rid of colon
 
-vairbale_name= 
+variable_name= 
 
 2times {
     play ( A4w )

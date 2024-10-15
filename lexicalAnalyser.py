@@ -1,10 +1,14 @@
 from Parser import Parser
 data = "Abcdj = A4w"
+data2 = "9 times: { play (A4w) }"
 
 parser = Parser()
 lexical_analysis = parser.scan(data)
+lexical_analysis2 = parser.scan(data2)
 
 print(lexical_analysis)   
+print(lexical_analysis2)
+
 
 
 
