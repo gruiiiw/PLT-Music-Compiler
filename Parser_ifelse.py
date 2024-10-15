@@ -43,7 +43,7 @@ class LexerDfa:
         self.advance()
     if self.cur_char.isspace():
         self.advance()
-    while self.cur_char in "ABCDEFG": # this should be calling note_token i think
+    while self.cur_char is not None and self.cur_char in "ABCDEFG": # this should be calling note_token i think
         if self.cur_char.isspace():
             self.advance()
             continue
@@ -57,18 +57,21 @@ class LexerDfa:
       if self.cur_char.isspace():
         self.advance() # might go inside the note loop
         continue 
-      if self.cur_char in "ABCDEFG":
+      while self.cur_char is not None and self.cur_char in "ABCDEFG":
+        if self.cur_char.isspace():
+            self.advance()
+            continue
         if self.note_token():
           continue
         elif self.cur_char in "abcdefghijklmnopqrstuvwxyz": # then its part of a variable 
           if self.variable_token():
             continue
 
-      elif self.cur_char in "HIJKLMNOPQRSTUVWXYZ":
+      if self.cur_char in "HIJKLMNOPQRSTUVWXYZ":
         #This means its a variable token
         self.advance()
         if self.cur_char in "abcdefghijklmnopqrstuvwxyz": # then its part of a variable 
-          if self.variable_token():
+          if self.variable_token(): # theres a bug here
             continue
     
       elif self.cur_char == 'p': # Play KeywordToken - play ( A4w ) followed by note or iD 
@@ -144,7 +147,7 @@ class LexerDfa:
     return self.tokens
 
 # Test the lexer (5 sample input programs)
-lexer_Dfa1 = LexerDfa("""Variable= A4w 
+lexer_Dfa1 = LexerDfa("""Variable= A4w B3h
                         5times{play(A4w)}""")  # B3h is being stopped, can't play more than 1 note rn
 lexer_Dfa1.run()
 tokens_1 = lexer_Dfa1.get_tokens()
@@ -152,7 +155,8 @@ tokens_1 = lexer_Dfa1.get_tokens()
 for token in tokens_1:
   print(token)
 
-lexer_DFA2 = LexerDfa("Happy= A4w")
+lexer_DFA2 = LexerDfa("""Happy= A4w
+                         Birthday= B3h""")
 lexer_DFA2.run()
 tokens_2 = lexer_DFA2.get_tokens()
 
