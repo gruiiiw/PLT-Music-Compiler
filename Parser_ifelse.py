@@ -57,17 +57,17 @@ class LexerDfa:
       if self.cur_char.isspace():
         self.advance() # might go inside the note loop
         continue 
-      while self.cur_char is not None and self.cur_char in "ABCDEFG":
+      while self.cur_char is not None and self.cur_char in "ABCDEFG": # 
         if self.cur_char.isspace():
             self.advance()
             continue
-        if self.note_token():
+        if self.note_token(): # note 
           continue
         elif self.cur_char in "abcdefghijklmnopqrstuvwxyz": # then its part of a variable 
           if self.variable_token():
             continue
 
-      if self.cur_char in "HIJKLMNOPQRSTUVWXYZ":
+      if self.cur_char in "HIJKLMNOPQRSTUVWXYZ": 
         #This means its a variable token
         self.advance()
         if self.cur_char in "abcdefghijklmnopqrstuvwxyz": # then its part of a variable 
@@ -85,10 +85,10 @@ class LexerDfa:
               if self.cur_char == "(":
                 self.advance()
                 if self.cur_char in "ABCDEFG":
-                  if self.note_token():
+                  if self.note_token(): # note add variable 
                     continue
                   self.advance()
-                if self.cur_char == ")":
+                if self.cur_char == ")": 
                   self.advance()
                   self.tokens.append(("Keyword", "play"))
                   continue
@@ -147,7 +147,7 @@ class LexerDfa:
     return self.tokens
 
 # Test the lexer (5 sample input programs)
-lexer_Dfa1 = LexerDfa("""Variable= A4w B3h
+lexer_Dfa1 = LexerDfa("""Variable= A4w B3h C3q
                         5times{play(A4w)}""")  # B3h is being stopped, can't play more than 1 note rn
 lexer_Dfa1.run()
 tokens_1 = lexer_Dfa1.get_tokens()
