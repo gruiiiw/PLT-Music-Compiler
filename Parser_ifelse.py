@@ -25,7 +25,7 @@ class LexerDfa:
           if self.cur_char in "whqes":
               Token.append(self.cur_char)
               self.tokens.append(("NOTE", ''.join(Token)))  # End of Note Token
-              self.advance() # maybe leave the advance outside of the def
+              self.advance() # maybe leave the advance outside of the def 
               return True  # Note parsed
           else:
             self.errors.append("Error: Invalid note token, missing duration w, h, q, e, s, default as w.")
@@ -34,12 +34,22 @@ class LexerDfa:
             self.advance() # maybe leave the advance outside of the def
             return True  # Note parsed
             # defaults as whole note if no duration is given
+      elif self.cur_char in "abcdefghijklmnopqrstuvwxyz":
+        return False # its a variable
       elif self.cur_char not in "abcdefghijklmnopqrstuvwxyz":
-          self.errors.append("Error: Invalid note token, missing octave number 1-8")
-          # defaults as octave 4 if no octave is given
+          Token.append("4")
+          self.tokens.append(("NOTE", ''.join(Token)))
+          self.errors.append("Error: Invalid note token, missing octave number 1-8, default as octave 4.")
+          self.advance() # maybe leave the advance outside of the def
+          if self.cur_char in "whqes":
+              Token.append(self.cur_char)
+              self.tokens.append(("NOTE", ''.join(Token)))
+              self.advance()
+              return True
+              # defaults as octave 4 if no octave is given
       return False  # Note not parsed * maybe print an error message
     
-  def variable_token(self):
+  def variable_token(self): # this needs to be checked 
     var_token = [self.prev_char]  # Initialize var_token with the previous character
     # you can variable with assignment and variable without assignment 
     # separate the two
@@ -54,7 +64,7 @@ class LexerDfa:
         self.advance()
         if self.cur_char.isspace():
           self.advance()  
-          while self.cur_char is not None and self.cur_char in "ABCDEFG": # this should be calling note_token i think
+          while self.cur_char is not None and self.cur_char in "ABCDEFG ": # this should be calling note_token i think
               if self.cur_char.isspace():
                   self.advance()
                   continue
@@ -75,12 +85,15 @@ class LexerDfa:
             self.advance()
             self.tokens.append(("Keyword", "play"))
             if self.cur_char == "(":
+              print("parenthesis")
               self.advance()
               self.tokens.append(("Delimiter", "("))
-              while self.cur_char in "ABCDEFG":
-                if self.note_token():
+              while self.cur_char is not None and self.cur_char in "ABCDEFG ": # then there are notes
+                if self.cur_char.isspace():
+                  self.advance()
                   continue
-                self.advance()
+                elif self.note_token(): # note 
+                  continue
               if self.cur_char == ")":
                 self.advance()
                 self.tokens.append(("Delimiter", ")"))
@@ -97,7 +110,7 @@ class LexerDfa:
       if self.cur_char.isspace():
         self.advance() # might go inside the note loop
         continue 
-      while self.cur_char is not None and self.cur_char in "ABCDEFG": # 
+      while self.cur_char is not None and self.cur_char in "ABCDEFG ": # 
         if self.cur_char.isspace():
             self.advance()
             continue
@@ -109,6 +122,8 @@ class LexerDfa:
         else:
           break
 
+
+
       if self.cur_char in "HIJKLMNOPQRSTUVWXYZ": 
         #This means its a variable token
         self.advance()
@@ -116,24 +131,8 @@ class LexerDfa:
           if self.variable_token(): # theres a bug here
             continue
     
-      elif self.cur_char == 'p': # Play KeywordToken - play ( A4w ) followed by note or iD 
-        self.advance()
-        if self.cur_char == "l":
-          self.advance()
-          if self.cur_char == "a":
-            self.advance()
-            if self.cur_char == "y":
-              self.advance()
-              if self.cur_char == "(":
-                self.advance()
-                if self.cur_char in "ABCDEFG":
-                  if self.note_token(): # note add variable 
-                    continue
-                  self.advance()
-                if self.cur_char == ")": 
-                  self.advance()
-                  self.tokens.append(("Keyword", "play"))
-                  continue
+      elif self.play_token(): # play token
+        continue
       
       elif self.cur_char.isdigit(): # 5 Times KeywordToken /Integer 5 times { play (A4w) }
         print(f"Found digit: {self.cur_char}")
@@ -153,36 +152,21 @@ class LexerDfa:
                   if self.cur_char.isspace():
                     self.advance()
                   if self.cur_char == "{":
-                    # print("brace")
+                    print("brace")
                     self.advance()
                     self.tokens.append(("Keyword", "{"))
                     if self.cur_char.isspace():
+                      # print("space")
                       self.advance()
-                    if self.cur_char == "p":
+                    elif self.play_token():
+                      print("play token") 
+                    if self.cur_char == "}":
+                      self.tokens.append(("Keyword", "}")) #
+                      print("brace2") 
                       self.advance()
-                      if self.cur_char == "l":
-                        self.advance()
-                        if self.cur_char == "a":
-                          self.advance()
-                          if self.cur_char == "y":
-                            self.advance()
-                            self.tokens.append(("Keyword", "play"))
-                            if self.cur_char == "(":
-                              self.advance()
-                              self.tokens.append(("Delimiter", "(")) # if found two in a row, can print ignored error?
-                              if self.cur_char in "ABCDEFG": # Found note 
-                                if self.note_token():
-                                  print("note")
-                                
-                                if self.cur_char == ")": 
-                                  self.advance()
-                                  self.tokens.append(("Delimiter", ")"))
-                                  if self.cur_char == "}":
-                                    self.advance()
-                                    self.tokens.append(("Keyword", "}")) # 
-                                    continue # This is an accept state
-                              # elif found variable:
-
+                      # This is an accept state
+                # elif found variable:
+    return
 
         
   def get_tokens(self):
@@ -191,8 +175,10 @@ class LexerDfa:
     return self.errors
 
 # Test the lexer (5 sample input programs)
-lexer_Dfa1 = LexerDfa("""Variable= A4w B3h C3 C4w
-                        5times{play(Variable)}""")  # B3h is being stopped, can't play more than 1 note rn
+print("\n Test 1 \n\n")
+
+lexer_Dfa1 = LexerDfa("""Variable= A4w B3h C4w
+                        5times{play(A4w)}""")  # B3h is being stopped, can't play more than 1 note rn
 lexer_Dfa1.run()
 tokens_1 = lexer_Dfa1.get_tokens()
 errors_1 = lexer_Dfa1.get_errors()
@@ -206,9 +192,21 @@ if errors_1:
         print(error)
 
 
-lexer_DFA2 = LexerDfa("""Happy= A4w Birthday= B3h""")
+print("\n\n Test 2 \n\n")
+lexer_DFA2 = LexerDfa("Happy= A4w")
 lexer_DFA2.run()
 tokens_2 = lexer_DFA2.get_tokens()
 
 for token in tokens_2:
   print(token)
+
+print("\n\n Test 3 \n\n")
+
+lexer_DFA3 = LexerDfa("Birthday= A4w A4h B4w A4w D4h C4w")
+lexer_DFA3.run()
+tokens_3 = lexer_DFA3.get_tokens()
+
+for token in tokens_3:
+  print(token)
+
+print("\n\n Test 4 \n\n")
