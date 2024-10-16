@@ -13,8 +13,8 @@ NUMBERS = [0-9]
 IDENTIFIER = ['A-Z']['a-z']*
 OPERATORS = ["="]
 NOTE = [("A-G")(1-8)("whqes")]
-WHITESPACE = ['\n', '\t', ' ']
-DELIMITER = [":","(", ")", '{', '}'] # maybe get rid of colon
+WHITESPACE = ['\n', '\t',]
+DELIMITER = ["(", ")", '{', '}'] # maybe get rid of colon
 
 variable_name= 
 
