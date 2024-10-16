@@ -4,7 +4,7 @@ class LexerDfa:
     self.position = 0
     self.cur_char = input_str[self.position] if input_str else None
     self.tokens = []
-    self.errors = [] # List of errors 
+    self.errors = [] # List of errors, and their defaults 
     self.prev_char = None  
 
   def advance(self):
@@ -28,34 +28,70 @@ class LexerDfa:
               self.advance() # maybe leave the advance outside of the def
               return True  # Note parsed
           else:
-            self.errors.append("Error: Invalid note token, missing duration w, h, q, e, s")
+            self.errors.append("Error: Invalid note token, missing duration w, h, q, e, s, default as w.")
+            Token.append("w")
+            self.tokens.append(("NOTE", ''.join(Token)))
+            self.advance() # maybe leave the advance outside of the def
+            return True  # Note parsed
+            # defaults as whole note if no duration is given
       elif self.cur_char not in "abcdefghijklmnopqrstuvwxyz":
           self.errors.append("Error: Invalid note token, missing octave number 1-8")
+          # defaults as octave 4 if no octave is given
       return False  # Note not parsed * maybe print an error message
     
   def variable_token(self):
     var_token = [self.prev_char]  # Initialize var_token with the previous character
     # you can variable with assignment and variable without assignment 
+    # separate the two
     while self.cur_char is not None and self.cur_char in "abcdefghijklmnopqrstuvwxyz":
         var_token.append(self.cur_char)
         self.advance()
     self.tokens.append(("IDENTIFIER", ''.join(var_token)))
     if self.cur_char.isspace():
         self.advance()
-    if self.cur_char == "=":
+    if self.cur_char == "=": # then its being assigned to a note
         self.tokens.append(("OPERATOR", "="))
         self.advance()
-    if self.cur_char.isspace():
-        self.advance()
-    while self.cur_char is not None and self.cur_char in "ABCDEFG": # this should be calling note_token i think
         if self.cur_char.isspace():
-            self.advance()
-            continue
-        if self.note_token():
-            continue
-        self.advance() # maybe leave the advance outside of the def
+          self.advance()  
+          while self.cur_char is not None and self.cur_char in "ABCDEFG": # this should be calling note_token i think
+              if self.cur_char.isspace():
+                  self.advance()
+                  continue
+              if self.note_token():
+                  continue
+              self.advance() # maybe leave the advance outside of the def
+    else:
+        return True
 
- 
+  def play_token(self): 
+    if self.cur_char == "p":
+      self.advance()
+      if self.cur_char == "l":
+        self.advance()
+        if self.cur_char == "a":
+          self.advance()
+          if self.cur_char == "y":
+            self.advance()
+            self.tokens.append(("Keyword", "play"))
+            if self.cur_char == "(":
+              self.advance()
+              self.tokens.append(("Delimiter", "("))
+              while self.cur_char in "ABCDEFG":
+                if self.note_token():
+                  continue
+                self.advance()
+              if self.cur_char == ")":
+                self.advance()
+                self.tokens.append(("Delimiter", ")"))
+                return True
+    return False
+  
+  def times_token(self): 
+    # 5times 
+    return True
+  
+  # Ignore white space, but remember for variables, they should be on a new line when declared?
   def run(self):
     while self.cur_char is not None:
       if self.cur_char.isspace():
@@ -155,8 +191,8 @@ class LexerDfa:
     return self.errors
 
 # Test the lexer (5 sample input programs)
-lexer_Dfa1 = LexerDfa("""Variable= A4w B3h C3 C3
-                        5times{play(A4w)}""")  # B3h is being stopped, can't play more than 1 note rn
+lexer_Dfa1 = LexerDfa("""Variable= A4w B3h C3 C4w
+                        5times{play(Variable)}""")  # B3h is being stopped, can't play more than 1 note rn
 lexer_Dfa1.run()
 tokens_1 = lexer_Dfa1.get_tokens()
 errors_1 = lexer_Dfa1.get_errors()
