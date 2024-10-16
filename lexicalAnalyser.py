@@ -10,8 +10,6 @@ print(lexical_analysis)
 print(lexical_analysis2)
 
 
-
-
 # TODO Provide 5 sample input programs
 
 # TODO Make an execution script that will run the lexical analyzer or provide instructions on how to do soc

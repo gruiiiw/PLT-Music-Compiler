@@ -193,8 +193,8 @@ class LexerDfa:
 # Test the lexer (5 sample input programs)
 print("\n Test 1 \n\n")
 # This test shows the errors in the input string, when the note is missing a duration
-lexer_Dfa1 = LexerDfa("""Variable= A4w B3 C4
-                        5times{play(A4w B3h)}""") 
+lexer_Dfa1 = LexerDfa("""Espresso= A4w B3w C4
+                        5times{play(Espresso A4w B3h)}""") 
 lexer_Dfa1.run()
 tokens_1 = lexer_Dfa1.get_tokens()
 errors_1 = lexer_Dfa1.get_errors()
@@ -209,15 +209,24 @@ if errors_1:
 
 
 print("\n\n Test 2 \n\n")
-lexer_DFA2 = LexerDfa("Happy= A4w")
+# No errors in this input string (add errors to test)
+# Handles -add  lack of brace error 
+lexer_DFA2 = LexerDfa("Is = A4w It = B3h That Sweet= A4w B3h C4w 5times { play(Is It That Sweet) }")
 lexer_DFA2.run()
 tokens_2 = lexer_DFA2.get_tokens()
+errors_2 = lexer_DFA2.get_errors()
 
 for token in tokens_2:
   print(token)
 
+if errors_2:
+    print("Errors encountered:")
+    for error in errors_2:
+        print(error)
+
 print("\n\n Test 3 \n\n")
 # can't handle new lines yet
+# No errors in this input string
 lexer_DFA3 = LexerDfa("Birthday= A4w A4h B4w A4w D4h To = A4w A4h B4w A4w You = D4w 5times { play(Birthday To You) }")
 lexer_DFA3.run()
 tokens_3 = lexer_DFA3.get_tokens()
@@ -226,4 +235,30 @@ for token in tokens_3:
   print(token)
 
 print("\n\n Test 4 \n\n")
+lexer_DFA4 = LexerDfa("")
+lexer_DFA4.run()
+tokens_4 = lexer_DFA4.get_tokens()
+errors_4 = lexer_DFA4.get_errors()
 
+for token in tokens_4:
+  print(token)
+
+if errors_4:
+    print("Errors encountered:")
+    for error in errors_4:
+        print(error)
+
+print("\n\n Test 5 \n\n")
+
+lexer_DFA5 = LexerDfa("")
+lexer_DFA5.run()
+tokens_5 = lexer_DFA5.get_tokens()
+errors_5 = lexer_DFA5.get_errors()
+
+for token in tokens_5:
+  print(token)
+
+if errors_5:
+    print("Errors encountered:")
+    for error in errors_5:
+        print(error)

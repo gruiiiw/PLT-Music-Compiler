@@ -6,8 +6,6 @@ Define the lexical grammar for your language, ensuring each token and its rules 
 documented in a README file. Design the lexical grammar that has at least 5 different
 token types.
 
-
-# Regular Expresions for Lexical Grammer
 KEYWORD = ["times", "play"]
 NUMBERS = [0-9]
 IDENTIFIER = ['A-Z']['a-z']*
@@ -17,14 +15,9 @@ WHITESPACE = ['\n', '\t',]
 DELIMITER = ["(", ")", '{', '}'] # maybe get rid of colon
 
 variable_name= 
+2times {play ( A4w )}
 
-2times {
-    play ( A4w )
-}
-
-
-Happy = [A-Z][a-z]* - Identifier
-
+Rules: 
 
 ## Shell Script to Execute Lexer
 Installation Steps <br>
@@ -33,7 +26,9 @@ Installation Steps <br>
 
 
 ## Steps
-- 
+Please refer to our DFA image for steps of the Lexer.
+1. 
+
 
 ## Team
 Grace Dong grd2120 <br>
