@@ -28,6 +28,27 @@ class LexerDfa:
               self.tokens.append(("NOTE", ''.join(Token)))  # End of Note Token
               self.advance() # maybe leave the advance outside of the def 
               return True  # Note parsed
+          else:
+            self.errors.append("Error: Invalid note token, missing duration w, h, q, e, s, default as w.")
+            Token.append("w")
+            self.tokens.append(("NOTE", ''.join(Token)))
+            self.advance() # maybe leave the advance outside of the def
+            return True  # Note parsed
+            # defaults as whole note if no duration is given
+      elif self.cur_char in "abcdefghijklmnopqrstuvwxyz":
+        print("variable")
+        return False # its a variable
+      elif self.cur_char not in "abcdefghijklmnopqrstuvwxyz":
+          Token.append("4")
+          self.tokens.append(("NOTE", ''.join(Token)))
+          self.errors.append("Error: Invalid note token, missing octave number 1-8, default as octave 4.")
+          self.advance() # maybe leave the advance outside of the def
+          if self.cur_char in "whqes":
+              Token.append(self.cur_char)
+              self.tokens.append(("NOTE", ''.join(Token)))
+              self.advance()
+              return True
+              # defaults as octave 4 if no octave is given
       return False  # Note not parsed * maybe print an error message
     
   def variable_token(self): # this needs to be checked 
@@ -40,20 +61,66 @@ class LexerDfa:
     self.tokens.append(("IDENTIFIER", ''.join(var_token)))
     if self.cur_char.isspace():
         self.advance()
-    if self.cur_char == "=":
+    if self.cur_char == "=": # then its being assigned to a note
+        print("equals")
         self.tokens.append(("OPERATOR", "="))
         self.advance()
-    if self.cur_char.isspace():
-        self.advance()
-    while self.cur_char is not None and self.cur_char in "ABCDEFG": # this should be calling note_token i think
         if self.cur_char.isspace():
-            self.advance()
-            continue
-        if self.note_token():
-            continue
-        self.advance() # maybe leave the advance outside of the def
+          self.advance()  
+          while self.cur_char is not None and self.cur_char in "ABCDEFG ": # this should be calling note_token i think
+              if self.cur_char.isspace():
+                  self.advance()
+                  continue
+              elif self.note_token():
+                  print("variable note token")
+                  continue
+    else:
+        return True
 
- 
+  def play_token(self): 
+    if self.cur_char == "p":
+      self.advance()
+      if self.cur_char == "l":
+        self.advance()
+        if self.cur_char == "a":
+          self.advance()
+          if self.cur_char == "y":
+            self.advance()
+            self.tokens.append(("Keyword", "play"))
+            if self.cur_char == "(":
+              print("parenthesis")
+              self.advance()
+              self.tokens.append(("Delimiter", "("))
+              print(self.cur_char) # it will either be variable starting with ABCDEFG variable with H-Z or a note
+              
+              while self.cur_char is not None:
+                if self.cur_char.isspace():
+                    self.advance()
+                    continue
+                elif self.cur_char in "ABCDEFG":  # Notes or variable starting with A-G
+                    print("note or variable")
+                    if self.note_token():  # Handle note
+                        continue
+                    elif self.cur_char in "abcdefghijklmnopqrstuvwxyz":  # Variable part
+                        print("variable")
+                        if self.variable_token():
+                            continue
+                elif self.cur_char in "HIJKLMNOPQRSTUVWXYZ":  # Variable starting with H-Z
+                    print("variable token")
+                    self.advance()
+                    if self.variable_token():
+                        continue
+                elif self.cur_char == ")":
+                  self.advance()
+                  self.tokens.append(("Delimiter", ")"))
+                  return True
+    return False
+  
+  def times_token(self): 
+    # 5times 
+    return True
+  
+  # Ignore white space, but remember for variables, they should be on a new line when declared?
   def run(self):
     while self.cur_char is not None:
       if self.cur_char.isspace():
@@ -124,8 +191,10 @@ class LexerDfa:
     return self.errors
 
 # Test the lexer (5 sample input programs)
-lexer_Dfa1 = LexerDfa("""Variable= A4w B3h C3q
-                        5times{play(A4w)}""")  # B3h is being stopped, can't play more than 1 note rn
+print("\n Test 1 \n\n")
+# This test shows the errors in the input string, when the note is missing a duration
+lexer_Dfa1 = LexerDfa("""Variable= A4w B3 C4
+                        5times{play(A4w B3h)}""") 
 lexer_Dfa1.run()
 tokens_1 = lexer_Dfa1.get_tokens()
 errors_1 = lexer_Dfa1.get_errors()
@@ -133,8 +202,14 @@ errors_1 = lexer_Dfa1.get_errors()
 for token in tokens_1:
   print(token)
 
-lexer_DFA2 = LexerDfa("""Happy= A4w
-                         Birthday= B3h""")
+if errors_1:
+    print("Errors encountered:")
+    for error in errors_1:
+        print(error)
+
+
+print("\n\n Test 2 \n\n")
+lexer_DFA2 = LexerDfa("Happy= A4w")
 lexer_DFA2.run()
 tokens_2 = lexer_DFA2.get_tokens()
 
