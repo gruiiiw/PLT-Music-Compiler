@@ -92,10 +92,10 @@ class LexerDfa:
         #print("equals")
         self.tokens.append(("OPERATOR", "="))
         self.advance()
-        if self.cur_char.isspace():
+        if self.cur_char is not None and self.cur_char.isspace():
           self.advance()  
           while self.cur_char is not None and self.cur_char in "ABCDEFG ": # this should be calling note_token i think
-              if self.cur_char.isspace():
+              if self.cur_char is not None and self.cur_char.isspace():
                   self.advance()
                   continue
               elif self.note_token():
@@ -106,7 +106,9 @@ class LexerDfa:
 
   def play_token(self): 
     # Handles DFA State for recognizing a Play Token
+    # print(self.cur_char)
     if self.cur_char == "p":
+      print("p")
       self.advance()
       if self.cur_char == "l":
         self.advance()
@@ -158,7 +160,7 @@ class LexerDfa:
   def note_or_variable(self):
     # Handles DFA State for recognizing a Note or Variable Token
     while self.cur_char is not None:
-      if self.cur_char.isspace():
+      if self.cur_char is not None and self.cur_char.isspace():
           self.advance()
           continue
       elif self.cur_char in "ABCDEFG":  # Notes or variable starting with A-G
@@ -178,18 +180,15 @@ class LexerDfa:
          # self.advance()
          return True
 
-  def times_token(self): 
-    # Need to break this out into a separate function
-    return True
   
   # Ignore white space, but remember for variables, they should be on a new line when declared?
   def run(self):
     while self.cur_char is not None:
-      if self.cur_char.isspace():
+      if self.cur_char is not None and self.cur_char.isspace():
         self.advance() # might go inside the note loop
         continue 
       while self.cur_char is not None and self.cur_char in "ABCDEFGHIJKLMNOPQRSTUVWXYZ ": # 
-        if self.cur_char.isspace():
+        if self.cur_char is not None and self.cur_char.isspace():
             self.advance()
             continue
         elif self.note_token(): # note 
@@ -221,13 +220,13 @@ class LexerDfa:
                 if self.cur_char == "s":
                   self.advance()
                   self.tokens.append(("Keyword", "times"))
-                  if self.cur_char.isspace():
+                  if self.cur_char is not None and self.cur_char.isspace():
                     self.advance()
                   if self.cur_char == "{":
                     # print("brace")
                     self.advance()
                     self.tokens.append(("Keyword", "{"))
-                    if self.cur_char.isspace():
+                    if self.cur_char is not None and self.cur_char.isspace():
                       # print("space")
                       self.advance()
                     elif self.play_token():
@@ -238,8 +237,54 @@ class LexerDfa:
                       #print("brace2") 
                       self.advance()
                       # This is an accept state
-                # elif found variable:
-    
+                  else:
+                    self.errors.append("Error: Invalid token, missing { in times token.")
+                    self.tokens.append(("Keyword", "{"))
+                    if self.cur_char is not None and self.cur_char.isspace():
+                      # print("space")
+                      self.advance()
+                    elif self.play_token():
+                      #print("play token") 
+                      if self.cur_char == "}":
+                        self.tokens.append(("Keyword", "}")) #
+                        #print("brace2") 
+                        self.advance()
+                        # This is an accept state
+                else:
+                    self.errors.append("Error: Invalid token, missing s in times token.")
+                    self.advance()
+                    self.tokens.append(("Keyword", "times"))
+                    if self.cur_char is not None and self.cur_char.isspace():
+                      self.advance()
+                    if self.cur_char == "{":
+                      # print("brace")
+                      self.advance()
+                      self.tokens.append(("Keyword", "{"))
+                      if self.cur_char is not None and self.cur_char.isspace():
+                        # print("space")
+                        self.advance()
+                      elif self.play_token():
+                        # print("play token") 
+                        continue
+                      if self.cur_char == "}":
+                        self.tokens.append(("Keyword", "}")) #
+                        #print("brace2") 
+                        self.advance()
+                    else:
+                        self.errors.append("Error: Invalid token, missing { in times token.")
+                        self.tokens.append(("Keyword", "{"))
+                        #print("brace")
+                        if self.cur_char is not None and self.cur_char.isspace():
+                          # print("space")
+                          self.advance()
+                        elif self.play_token(): # this is the bug
+                          # print("play token") 
+                          continue
+                        if self.cur_char == "}":
+                          self.tokens.append(("Keyword", "}")) #
+                          #print("brace2") 
+                          self.advance()
+                          # This is an accept state
       else:
         return
     return
@@ -277,6 +322,7 @@ else:
     print("\n Test 1 \n\n")
     # This test shows the errors in the input string, when the note is missing a duration
     # This test shows multiple Identifiers being assigned to notes, and then played 5times in a play token
+    # Test shows play accepts both variables and notes
     lexer_Dfa1 = LexerDfa("""Thats= G4w That= G4h Me= B4h Espresso= C4q B4q B4 A4q
                             5times{play(Thats That Me Espresso A4w B3h G4w)}""") 
     lexer_Dfa1.run()
@@ -331,7 +377,8 @@ else:
     # Handles assigning multiple Identifiers, in different octaves and durations
     # Handles missing y in play token
     # Handles different spacing and new lines
-    lexer_DFA2 = LexerDfa("""Is = A4w B3h It = B3h That= B3h G7h G4w 
+    lexer_DFA2 = LexerDfa("""Is = A4w B3h It = B3h That= B3h G7h 
+                              G4w 
                               Sweet= A4w B3h C4w 5times{pla(Is It That Sweet)}""")
     lexer_DFA2.run()
     tokens_2 = lexer_DFA2.get_tokens()
@@ -380,8 +427,10 @@ else:
     '''
 
     print("\n\n Test 3 \n\n")
+    # Tests 5 notes to a single Identifier
     # Handles octave number error, 9 defaults to octave 4
-    lexer_DFA3 = LexerDfa("Happy= A4w Birthday= A4w A9h B4w A4w D4h To = A4w A4h B4w A4w You = D4w 5times {play(Birthday To You) }")
+    # Handles variables in [H-Z] then [A-G] then [H-Z]
+    lexer_DFA3 = LexerDfa("Happy= A4w Birthday= A4w A9h B4w A4w D4h To = A4w A4h B4w A4w You = D4w 5times{play(Birthday To You) }")
     lexer_DFA3.run()
     tokens_3 = lexer_DFA3.get_tokens()
     errors_3 = lexer_DFA3.get_errors()
@@ -430,6 +479,7 @@ else:
 
     print("\n\n Test 4 \n\n")
     # Tests playing before and after the Identifier assignment
+    # Testing multiple lines of notes
     # Handles missing ( in play token
     lexer_DFA4 = LexerDfa("play(A4w B3h G4w C4w D4w) Someone= D3h To= A4w B3h G4w C4w D4w Love= F3q playSomeone To Love)")
     lexer_DFA4.run()
@@ -478,13 +528,14 @@ else:
 
     print("\n\n Test 5 \n\n")
     # Tests multiple lines of input
-    # Handles missing ) in play token
-    lexer_DFA5 = LexerDfa("""White= D4h Lips=D4h Pale= Face=
-                            Breathin= In= The= Snowflakes=
-                            Burnt= Lungs= Sour= Taste=
-                            play(White Lips Pale Face
+    # Tests missing s in times token
+    # Tests missing { in times token
+    lexer_DFA5 = LexerDfa("""White= D4h Lips=D4h Pale= A4w Face= B4s
+                            Breathin= B4s C3q In= C3q The= D4q Snowflakes= C4q D4q
+                            Burnt= E4s F3s Lungs= F3s Sour= G3s Taste= G3s
+                            2time{play(White Lips Pale Face
                             Breathin In The Snowflakes
-                            Burnt Lungs Sour Taste)""")
+                            Burnt Lungs Sour Taste)}""")
     lexer_DFA5.run()
     tokens_5 = lexer_DFA5.get_tokens()
     errors_5 = lexer_DFA5.get_errors()
@@ -498,9 +549,66 @@ else:
             print(error)
 
     # Output:
-
     '''
-
+    ('IDENTIFIER', 'White')
+    ('OPERATOR', '=')
+    ('NOTE', 'D4h')
+    ('IDENTIFIER', 'Lips')
+    ('OPERATOR', '=')
+    ('NOTE', 'D4h')
+    ('IDENTIFIER', 'Pale')
+    ('OPERATOR', '=')
+    ('NOTE', 'A4w')
+    ('IDENTIFIER', 'Face')
+    ('OPERATOR', '=')
+    ('NOTE', 'B4s')
+    ('IDENTIFIER', 'Breathin')
+    ('OPERATOR', '=')
+    ('NOTE', 'B4s')
+    ('NOTE', 'C3q')
+    ('IDENTIFIER', 'In')
+    ('OPERATOR', '=')
+    ('NOTE', 'C3q')
+    ('IDENTIFIER', 'The')
+    ('OPERATOR', '=')
+    ('NOTE', 'D4q')
+    ('IDENTIFIER', 'Snowflakes')
+    ('OPERATOR', '=')
+    ('NOTE', 'C4q')
+    ('NOTE', 'D4q')
+    ('IDENTIFIER', 'Burnt')
+    ('OPERATOR', '=')
+    ('NOTE', 'E4s')
+    ('NOTE', 'F3s')
+    ('IDENTIFIER', 'Lungs')
+    ('OPERATOR', '=')
+    ('NOTE', 'F3s')
+    ('IDENTIFIER', 'Sour')
+    ('OPERATOR', '=')
+    ('NOTE', 'G3s')
+    ('IDENTIFIER', 'Taste')
+    ('OPERATOR', '=')
+    ('NOTE', 'G3s')
+    ('INTEGER', '2')
+    ('Keyword', 'times')
+    ('Keyword', 'play')
+    ('Delimiter', '(')
+    ('IDENTIFIER', 'White')
+    ('IDENTIFIER', 'Lips')
+    ('IDENTIFIER', 'Pale')
+    ('IDENTIFIER', 'Face')
+    ('IDENTIFIER', 'Breathin')
+    ('IDENTIFIER', 'In')
+    ('IDENTIFIER', 'The')
+    ('IDENTIFIER', 'Snowflakes')
+    ('IDENTIFIER', 'Burnt')
+    ('IDENTIFIER', 'Lungs')
+    ('IDENTIFIER', 'Sour')
+    ('IDENTIFIER', 'Taste')
+    ('Delimiter', ')')
+    Errors encountered:
+    Error: Invalid token, missing s in times token.
+    Error: Invalid token, missing { in times token.
     '''
 
     
