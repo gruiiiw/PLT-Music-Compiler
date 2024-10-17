@@ -27,12 +27,14 @@ class LexerDfa:
       Token.append(self.cur_char)
       self.advance()
       if self.cur_char.isdigit() and int(self.cur_char) in range(1, 9):
+          print(self.cur_char + "_22") 
           Token.append(self.cur_char)
           self.advance()
           if self.cur_char in "whqes":
               Token.append(self.cur_char)
               self.tokens.append(("NOTE", ''.join(Token)))  # End of Note Token
               self.advance() # maybe leave the advance outside of the def 
+              print("note_token_31")
               return True  # Note parsed
           else:
             self.errors.append("Error: Invalid note token, missing duration w, h, q, e, s, default as w.")
