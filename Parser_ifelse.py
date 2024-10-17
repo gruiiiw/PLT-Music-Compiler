@@ -35,6 +35,24 @@ class LexerDfa:
             self.advance() # maybe leave the advance outside of the def
             return True  # Note parsed
             # defaults as whole note if no duration is given
+      elif self.cur_char == '9':
+          self.errors.append(f"Error: Invalid octave number {self.cur_char}, default as octave 4.")
+          Token.append("4")
+          self.advance()
+          print(self.cur_char + "42")
+          if self.cur_char in "whqes":
+              print("duration_43")
+              Token.append(self.cur_char)
+              self.tokens.append(("NOTE", ''.join(Token)))
+              self.advance()
+              return True
+          else:
+              self.errors.append("Error: Invalid note token, missing duration w, h, q, e, s, default as w.")
+              Token.append("w")
+              self.tokens.append(("NOTE", ''.join(Token)))
+              self.advance()
+              return True
+      
       elif self.cur_char in "abcdefghijklmnopqrstuvwxyz":
         print("variable")
         return False # its a variable
@@ -193,8 +211,9 @@ class LexerDfa:
 # Test the lexer (5 sample input programs)
 print("\n Test 1 \n\n")
 # This test shows the errors in the input string, when the note is missing a duration
-lexer_Dfa1 = LexerDfa("""Espresso= A4w B3w C4
-                        5times{play(Espresso A4w B3h)}""") 
+# Handles invalid octave number 9
+lexer_Dfa1 = LexerDfa("""Espresso= A4w B9w C4
+                        5times{play(Espresso A4w B3h G4w)}""") 
 lexer_Dfa1.run()
 tokens_1 = lexer_Dfa1.get_tokens()
 errors_1 = lexer_Dfa1.get_errors()
@@ -206,6 +225,29 @@ if errors_1:
     print("Errors encountered:")
     for error in errors_1:
         print(error)
+
+# Output: 
+'''
+('IDENTIFIER', 'Espresso')
+('OPERATOR', '=')
+('NOTE', 'A4w')
+('NOTE', 'B4w')
+('NOTE', 'C4w')
+('INTEGER', '5')
+('Keyword', 'times')
+('Keyword', '{')
+('Keyword', 'play')
+('Delimiter', '(')
+('IDENTIFIER', 'Espresso')
+('NOTE', 'A4w')
+('NOTE', 'B3h')
+('NOTE', 'G4w')
+('Delimiter', ')')
+('Keyword', '}')
+Errors encountered:
+Error: Invalid octave number 9, default as octave 4.
+Error: Invalid note token, missing duration w, h, q, e, s, default as w.
+'''
 
 
 print("\n\n Test 2 \n\n")
