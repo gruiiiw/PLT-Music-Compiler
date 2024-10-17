@@ -107,38 +107,66 @@ class LexerDfa:
           if self.cur_char == "y":
             self.advance()
             self.tokens.append(("Keyword", "play"))
-            if self.cur_char == "(":
-              print("parenthesis")
-              self.advance()
-              self.tokens.append(("Delimiter", "("))
-              print(self.cur_char) # it will either be variable starting with ABCDEFG variable with H-Z or a note
-              
-              while self.cur_char is not None:
-                if self.cur_char.isspace():
-                    self.advance()
-                    continue
-                elif self.cur_char in "ABCDEFG":  # Notes or variable starting with A-G
-                    print("note or variable")
-                    if self.note_token():  # Handle note
-                        continue
-                    elif self.cur_char in "abcdefghijklmnopqrstuvwxyz":  # Variable part
-                        print("variable")
-                        if self.variable_token():
-                            continue
-                elif self.cur_char in "HIJKLMNOPQRSTUVWXYZ":  # Variable starting with H-Z
-                    print("variable token")
-                    self.advance()
-                    if self.variable_token():
-                        continue
-                elif self.cur_char == ")":
-                  self.advance()
-                  self.tokens.append(("Delimiter", ")"))
-                  return True
-            else: 
-               self.errors.append("Error: Missing ( in play token.")
-           
+            if self.parenthesis_token():
+              return True
+          else:
+             return 
     return False
   
+  def parenthesis_token(self):
+     # Handles DFA State for recognizing a Parenthesis Token
+    if self.cur_char == "(":
+      # print("parenthesis")
+      self.advance()
+      self.tokens.append(("Delimiter", "("))
+      print(self.cur_char)  # it will either be variable starting with ABCDEFG variable with H-Z or a note
+      
+      if self.note_or_variable():
+         if self.cur_char == ")":
+            self.tokens.append(("Delimiter", ")"))
+            self.advance()
+            return True
+         else:
+            print(self.cur_char + "130")
+            self.errors.append("Error: Missing ) in play token.")
+            return False
+    else:   
+      self.errors.append("Error: Missing ( in play token.")
+      if self.note_or_variable():
+         if self.cur_char == ")":
+            self.tokens.append(("Delimiter", ")"))
+            self.advance()
+            return True
+         else:
+            print(self.cur_char + "141")
+            self.errors.append("Error: Missing ) in play token.")
+            return False
+      
+    return False
+     
+  def note_or_variable(self):
+    # Handles DFA State for recognizing a Note or Variable Token
+    while self.cur_char is not None:
+      if self.cur_char.isspace():
+          self.advance()
+          continue
+      elif self.cur_char in "ABCDEFG":  # Notes or variable starting with A-G
+          # print("note or variable")
+          if self.note_token():  # Handle note
+              continue
+          elif self.cur_char in "abcdefghijklmnopqrstuvwxyz":  # Variable 
+              # print("variable")
+              if self.variable_token():
+                  continue
+      elif self.cur_char in "HIJKLMNOPQRSTUVWXYZ":  # Variable starting with H-Z
+          # print("variable token")
+          self.advance()
+          if self.variable_token():
+              continue
+      else:
+         # self.advance()
+         return True
+
   def times_token(self): 
     # 5times 
     return True
@@ -313,7 +341,8 @@ for token in tokens_3:
 
 print("\n\n Test 4 \n\n")
 # Tests playing before and after the Identifier assignment
-lexer_DFA4 = LexerDfa("play(A4w B3h G4w C4w D4w) Someone= D3h To= A4w B3h G4w C4w D4w Love= F3q play(Someone To Love)")
+# Handles missing ( in play token
+lexer_DFA4 = LexerDfa("play(A4w B3h G4w C4w D4w) Someone= D3h To= A4w B3h G4w C4w D4w Love= F3q playSomeone To Love)")
 lexer_DFA4.run()
 tokens_4 = lexer_DFA4.get_tokens()
 errors_4 = lexer_DFA4.get_errors()
@@ -350,11 +379,12 @@ if errors_4:
 ('OPERATOR', '=')
 ('NOTE', 'F3q')
 ('Keyword', 'play')
-('Delimiter', '(')
 ('IDENTIFIER', 'Someone')
 ('IDENTIFIER', 'To')
 ('IDENTIFIER', 'Love')
 ('Delimiter', ')')
+Errors encountered:
+Error: Missing ( in play token.
 '''
 
 print("\n\n Test 5 \n\n")
