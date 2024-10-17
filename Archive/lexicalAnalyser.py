@@ -1,4 +1,4 @@
-from Parser import Parser
+from Archive.Parser import Parser
 data = "Abcdj = A4w"
 data2 = "9 times: { play (A4w) }"
 
