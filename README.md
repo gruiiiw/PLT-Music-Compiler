@@ -6,18 +6,21 @@ Define the lexical grammar for your language, ensuring each token and its rules 
 documented in a README file. Design the lexical grammar that has at least 5 different
 token types.
 
-KEYWORD = ["times", "play"]
-NUMBERS = [0-9]
-IDENTIFIER = ['A-Z']['a-z']*
-OPERATORS = ["="]
-NOTE = [("A-G")(1-8)("whqes")]
-WHITESPACE = ['\n', '\t',]
-DELIMITER = ["(", ")", '{', '}'] # maybe get rid of colon
+KEYWORD = ["times", "play"] <br>
+NUMBERS = [0-9] <br>
+IDENTIFIER = ['A-Z']['a-z']* <br>
+    Examples: Happy, Birthday, Variable
+OPERATORS = ["="] <br>
+NOTE = [("A-G")(1-8)("w|h|q|e|s")] <br>
+    Examples: 
+WHITESPACE = ['\n', '\t',] <br>
+DELIMITER = ["(", ")", '{', '}'] <br>
 
-variable_name= 
-2times {play ( A4w )}
+Example Program: <br>
+    Variable_name= A4w C2h B43  <br>
+    2times {play ( variable_name A4w )}  <br>
 
-Rules: 
+Rules:  <br>
 
 ## Shell Script to Execute Lexer
 Installation Steps <br>
@@ -27,7 +30,10 @@ Installation Steps <br>
 
 ## Steps
 Please refer to our DFA image for steps of the Lexer.
-1. 
+![DFA Image](dfa_image.png)
+add DFA here
+
+1. When parsing the string from the start*  
 
 
 ## Team
