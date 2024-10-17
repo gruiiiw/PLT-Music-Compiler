@@ -14,13 +14,18 @@ class LexerDfa:
       self.cur_char = None
     else:
       self.cur_char = self.input_str[self.position]
+      while self.cur_char == '\n':
+          self.position += 1
+          if self.position >= len(self.input_str):
+              self.cur_char = None
+              break
+          self.cur_char = self.input_str[self.position]
 
   def note_token(self):
       # Handles DFA State for recognizing a note Token
       Token = []
       Token.append(self.cur_char)
       self.advance()
-      print("note_token")
       if self.cur_char.isdigit() and int(self.cur_char) in range(1, 9):
           print(self.cur_char + "_22") 
           Token.append(self.cur_char)
@@ -44,7 +49,6 @@ class LexerDfa:
           self.advance()
           # print(self.cur_char + "42")
           if self.cur_char in "whqes":
-              print("duration_43")
               Token.append(self.cur_char)
               self.tokens.append(("NOTE", ''.join(Token)))
               self.advance()
@@ -251,7 +255,7 @@ class LexerDfa:
 # Test the lexer (5 sample input programs)
 print("\n Test 1 \n\n")
 # This test shows the errors in the input string, when the note is missing a duration
-# Handles invalid octave number 9
+# Handles invalid octave number 9, sets it to default octave 4
 lexer_Dfa1 = LexerDfa("""Thats= G4w That= G4h Me= B4h Espresso= C4q B9q B4 A4q
                         5times{play(Thats That Me Espresso A4w B3h G4w)}""") 
 lexer_Dfa1.run()
@@ -268,16 +272,29 @@ if errors_1:
 
 # Output: 
 '''
+('IDENTIFIER', 'Thats')
+('OPERATOR', '=')
+('NOTE', 'G4w')
+('IDENTIFIER', 'That')
+('OPERATOR', '=')
+('NOTE', 'G4h')
+('IDENTIFIER', 'Me')
+('OPERATOR', '=')
+('NOTE', 'B4h')
 ('IDENTIFIER', 'Espresso')
 ('OPERATOR', '=')
-('NOTE', 'A4w')
+('NOTE', 'C4q')
+('NOTE', 'B4q')
 ('NOTE', 'B4w')
-('NOTE', 'C4w')
+('NOTE', 'A4q')
 ('INTEGER', '5')
 ('Keyword', 'times')
 ('Keyword', '{')
 ('Keyword', 'play')
 ('Delimiter', '(')
+('IDENTIFIER', 'Thats')
+('IDENTIFIER', 'That')
+('IDENTIFIER', 'Me')
 ('IDENTIFIER', 'Espresso')
 ('NOTE', 'A4w')
 ('NOTE', 'B3h')
@@ -292,7 +309,8 @@ Error: Invalid note token, missing duration w, h, q, e, s, default as w.
 print("\n\n Test 2 \n\n")
 # Handles assigning multiple Identifiers, and playing them in a play token 
 # Handles missing y in play token
-lexer_DFA2 = LexerDfa("Is = A4w B3h It = B3h That= B3h G7h G4w Sweet= A4w B3h C4w 5times{pla(Is It That Sweet)}")
+lexer_DFA2 = LexerDfa("""Is = A4w B3h It = B3h That= B3h G7h G4w 
+                          Sweet= A4w B3h C4w 5times{pla(Is It That Sweet)}""")
 lexer_DFA2.run()
 tokens_2 = lexer_DFA2.get_tokens()
 errors_2 = lexer_DFA2.get_errors()
