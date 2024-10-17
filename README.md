@@ -61,7 +61,8 @@ Installation Steps <br>
 ## Usage  
 Make sure you have python3 installed. You can install it from here https://www.python.org/downloads/
 ### Option 1, Our own test cases
-Now make sure to set the permission for the .sh files. You can use these two commands. 
+Now make sure to set the permission for the .sh files. You use these two commands. Run them one after 
+the other <br>
 ``` chmod +x run_scanner.sh ```
 ``` chmod +x run_tests.sh ```
 <br>
@@ -69,8 +70,8 @@ The provided test cases above are also built into our code. You can run these te
 
 ``` ./run_tests.sh ``` 
 
-### Option 1, Scan input from the command line
-You can enter your own input into the system using the command, replacing the 0 with a 1 <br>
+### Option 2, Scan input from the command line
+You can enter your own input into the system using the command<br>
 ``` ./run_scanner.sh ``` 
 When you are done entering your own input, to send the EOF, press control + d on mac or ctrl + z on windows. 
 
