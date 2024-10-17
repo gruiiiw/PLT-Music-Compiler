@@ -40,7 +40,7 @@ class LexerDfa:
           self.errors.append(f"Error: Invalid octave number {self.cur_char}, default as octave 4.")
           Token.append("4")
           self.advance()
-          print(self.cur_char + "42")
+          # print(self.cur_char + "42")
           if self.cur_char in "whqes":
               print("duration_43")
               Token.append(self.cur_char)
@@ -344,6 +344,12 @@ tokens_3 = lexer_DFA3.get_tokens()
 
 for token in tokens_3:
   print(token)
+
+# Output:
+'''
+
+
+'''
 
 print("\n\n Test 4 \n\n")
 # Tests playing before and after the Identifier assignment
