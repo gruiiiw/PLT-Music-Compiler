@@ -29,7 +29,7 @@ Installation Steps <br>
 
 
 ## Steps
-Please refer to our DFA image for steps of the Lexer.
+Please refer to our DFA image for steps of the Lexer. <br>
 ![DFA Image](dfa_image.png)
 add DFA here
 

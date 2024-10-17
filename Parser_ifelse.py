@@ -110,7 +110,10 @@ class LexerDfa:
             if self.parenthesis_token():
               return True
           else:
-             return 
+            self.errors.append("Error: Missing y in play token.")
+            self.tokens.append(("Keyword", "play"))
+            if self.parenthesis_token():
+              return True
     return False
   
   def parenthesis_token(self):
@@ -168,7 +171,7 @@ class LexerDfa:
          return True
 
   def times_token(self): 
-    # 5times 
+    # Need to break this out into a separate function
     return True
   
   # Ignore white space, but remember for variables, they should be on a new line when declared?
@@ -283,9 +286,9 @@ Error: Invalid note token, missing duration w, h, q, e, s, default as w.
 '''
 
 print("\n\n Test 2 \n\n")
-# No errors in this input string (add errors to test)
-# Handles -add  lack of brace error 
-lexer_DFA2 = LexerDfa("Is = A4w B3h It = B3h That= B3h G7h G4w Sweet= A4w B3h C4w 5times{play(Is It That Sweet)}")
+# Handles assigning multiple Identifiers, and playing them in a play token 
+# Handles missing y in play token
+lexer_DFA2 = LexerDfa("Is = A4w B3h It = B3h That= B3h G7h G4w Sweet= A4w B3h C4w 5times{pla(Is It That Sweet)}")
 lexer_DFA2.run()
 tokens_2 = lexer_DFA2.get_tokens()
 errors_2 = lexer_DFA2.get_errors()
@@ -328,10 +331,13 @@ if errors_2:
 ('IDENTIFIER', 'Sweet')
 ('Delimiter', ')')
 ('Keyword', '}')
+Errors encountered:
+Error: Missing ( in play token.
 '''
 
 print("\n\n Test 3 \n\n")
 # can't handle new lines yet
+# Maybe handle a brace error here
 lexer_DFA3 = LexerDfa("Birthday= A4w A4h B4w A4w D4h To = A4w A4h B4w A4w You = D4w 5times { play(Birthday To You) }")
 lexer_DFA3.run()
 tokens_3 = lexer_DFA3.get_tokens()
