@@ -22,12 +22,14 @@ class LexerDfa:
       self.advance()
       print("note_token")
       if self.cur_char.isdigit() and int(self.cur_char) in range(1, 9):
+          print(self.cur_char + "_22") 
           Token.append(self.cur_char)
           self.advance()
           if self.cur_char in "whqes":
               Token.append(self.cur_char)
               self.tokens.append(("NOTE", ''.join(Token)))  # End of Note Token
               self.advance() # maybe leave the advance outside of the def 
+              print("note_token_31")
               return True  # Note parsed
           else:
             self.errors.append("Error: Invalid note token, missing duration w, h, q, e, s, default as w.")
@@ -56,7 +58,10 @@ class LexerDfa:
       
       elif self.cur_char in "abcdefghijklmnopqrstuvwxyz":
         print("variable")
-        return False # its a variable
+        print(self.cur_char + '_59') 
+        print(self.prev_char + '_60')
+        if self.variable_token():
+            return True
       elif self.cur_char not in "abcdefghijklmnopqrstuvwxyz":
           Token.append("4")
           self.tokens.append(("NOTE", ''.join(Token)))
@@ -141,7 +146,7 @@ class LexerDfa:
             self.advance()
             return True
          else:
-            print(self.cur_char + "141")
+            # print(self.cur_char + "141")
             self.errors.append("Error: Missing ) in play token.")
             return False
       
@@ -180,15 +185,14 @@ class LexerDfa:
       if self.cur_char.isspace():
         self.advance() # might go inside the note loop
         continue 
-      while self.cur_char is not None and self.cur_char in "ABCDEFG ": # 
+      while self.cur_char is not None and self.cur_char in "ABCDEFGHIJKLMNOPQRSTUVWXYZ ": # 
+        print("184")
         if self.cur_char.isspace():
             self.advance()
             continue
         elif self.note_token(): # note 
+          print("188")
           continue
-        elif self.cur_char in "abcdefghijklmnopqrstuvwxyz": # then its part of a variable 
-          if self.variable_token():
-            continue
         else:
           break
 
@@ -219,7 +223,7 @@ class LexerDfa:
                   if self.cur_char.isspace():
                     self.advance()
                   if self.cur_char == "{":
-                    print("brace")
+                    # print("brace")
                     self.advance()
                     self.tokens.append(("Keyword", "{"))
                     if self.cur_char.isspace():
@@ -248,8 +252,8 @@ class LexerDfa:
 print("\n Test 1 \n\n")
 # This test shows the errors in the input string, when the note is missing a duration
 # Handles invalid octave number 9
-lexer_Dfa1 = LexerDfa("""Espresso= A4w B9w C4
-                        5times{play(Espresso A4w B3h G4w)}""") 
+lexer_Dfa1 = LexerDfa("""Thats= G4w That= G4h Me= B4h Espresso= C4q B9q B4 A4q
+                        5times{play(Thats That Me Espresso A4w B3h G4w)}""") 
 lexer_Dfa1.run()
 tokens_1 = lexer_Dfa1.get_tokens()
 errors_1 = lexer_Dfa1.get_errors()
@@ -338,7 +342,7 @@ Error: Missing ( in play token.
 print("\n\n Test 3 \n\n")
 # can't handle new lines yet
 # Maybe handle a brace error here
-lexer_DFA3 = LexerDfa("Birthday= A4w A4h B4w A4w D4h To = A4w A4h B4w A4w You = D4w 5times { play(Birthday To You) }")
+lexer_DFA3 = LexerDfa("Happy= A4w Birthday= A4w A4h B4w A4w D4h To = A4w A4h B4w A4w You = D4w 5times { play(Birthday To You) }")
 lexer_DFA3.run()
 tokens_3 = lexer_DFA3.get_tokens()
 
