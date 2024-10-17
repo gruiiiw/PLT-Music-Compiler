@@ -276,6 +276,7 @@ if type == "1":
 else:
     print("\n Test 1 \n\n")
     # This test shows the errors in the input string, when the note is missing a duration
+    # This test shows multiple Identifiers being assigned to notes, and then played 5times in a play token
     lexer_Dfa1 = LexerDfa("""Thats= G4w That= G4h Me= B4h Espresso= C4q B4q B4 A4q
                             5times{play(Thats That Me Espresso A4w B3h G4w)}""") 
     lexer_Dfa1.run()
@@ -327,9 +328,9 @@ else:
 
         
     print("\n\n Test 2 \n\n")
-    # Handles assigning multiple Identifiers, and playing them in a play token 
+    # Handles assigning multiple Identifiers, in different octaves and durations
     # Handles missing y in play token
-    # Handles different spacing and note durations/octaves
+    # Handles different spacing and new lines
     lexer_DFA2 = LexerDfa("""Is = A4w B3h It = B3h That= B3h G7h G4w 
                               Sweet= A4w B3h C4w 5times{pla(Is It That Sweet)}""")
     lexer_DFA2.run()
@@ -379,20 +380,52 @@ else:
     '''
 
     print("\n\n Test 3 \n\n")
-    # Maybe handle a brace error here
     # Handles octave number error, 9 defaults to octave 4
-    lexer_DFA3 = LexerDfa("Happy= A4w Birthday= A4w A9h B4w A4w D4h To = A4w A4h B4w A4w You = D4w 5times {playBirthday To You) }")
+    lexer_DFA3 = LexerDfa("Happy= A4w Birthday= A4w A9h B4w A4w D4h To = A4w A4h B4w A4w You = D4w 5times {play(Birthday To You) }")
     lexer_DFA3.run()
     tokens_3 = lexer_DFA3.get_tokens()
     errors_3 = lexer_DFA3.get_errors()
 
     for token in tokens_3:
         print(token)
+    
+    if errors_3:
+        print("Errors encountered:")
+        for error in errors_3:
+            print(error)
 
     # Output:
     '''
-
-
+    ('IDENTIFIER', 'Happy')
+    ('OPERATOR', '=')
+    ('NOTE', 'A4w')
+    ('IDENTIFIER', 'Birthday')
+    ('OPERATOR', '=')
+    ('NOTE', 'A4w')
+    ('NOTE', 'A4h')
+    ('NOTE', 'B4w')
+    ('NOTE', 'A4w')
+    ('NOTE', 'D4h')
+    ('IDENTIFIER', 'To')
+    ('OPERATOR', '=')
+    ('NOTE', 'A4w')
+    ('NOTE', 'A4h')
+    ('NOTE', 'B4w')
+    ('NOTE', 'A4w')
+    ('IDENTIFIER', 'You')
+    ('OPERATOR', '=')
+    ('NOTE', 'D4w')
+    ('INTEGER', '5')
+    ('Keyword', 'times')
+    ('Keyword', '{')
+    ('Keyword', 'play')
+    ('Delimiter', '(')
+    ('IDENTIFIER', 'Birthday')
+    ('IDENTIFIER', 'To')
+    ('IDENTIFIER', 'You')
+    ('Delimiter', ')')
+    Errors encountered:
+    Error: Invalid octave number 9, default as octave 4.
     '''
 
     print("\n\n Test 4 \n\n")
@@ -446,7 +479,12 @@ else:
     print("\n\n Test 5 \n\n")
     # Tests multiple lines of input
     # Handles missing ) in play token
-    lexer_DFA5 = LexerDfa("""White""")
+    lexer_DFA5 = LexerDfa("""White= D4h Lips=D4h Pale= Face=
+                            Breathin= In= The= Snowflakes=
+                            Burnt= Lungs= Sour= Taste=
+                            play(White Lips Pale Face
+                            Breathin In The Snowflakes
+                            Burnt Lungs Sour Taste)""")
     lexer_DFA5.run()
     tokens_5 = lexer_DFA5.get_tokens()
     errors_5 = lexer_DFA5.get_errors()
@@ -465,9 +503,4 @@ else:
 
     '''
 
-    """White= Lips= Pale= Face=
-                            Breathin= In= The= Snowflakes=
-                            Burnt= Lungs= Sour= Taste=
-                            play(White Lips Pale Face
-                            Breathin In The Snowflakes
-                            Burnt Lungs Sour Taste)"""
+    
