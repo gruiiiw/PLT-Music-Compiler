@@ -55,6 +55,9 @@ Example Program: <br>
 ## Shell Script to Execute Lexer
 Installation Steps <br>
 
+## Tests
+
+
 ## Usage  
 Make sure you have python3 installed. You can install it from here https://www.python.org/downloads/
 ### Option 1, Our own test cases
@@ -62,21 +65,19 @@ Now make sure to set the permission for the .sh files. You can use these two com
 ``` chmod +x run_scanner.sh ```
 ``` chmod +x run_tests.sh ```
 <br>
-We have provided test cases built into our code. You can run these test cases using the following command. <br> 
+The provided test cases above are also built into our code. You can run these test cases using the following command. <br> 
 
 ``` ./run_tests.sh ``` 
 
 ### Option 1, Scan input from the command line
 You can enter your own input into the system using the command, replacing the 0 with a 1 <br>
 ``` ./run_scanner.sh ``` 
+When you are done entering your own input, to send the EOF, press control + d on mac or ctrl + z on windows. 
 
 
 ## Steps
 Please refer to our DFA image for steps of the Lexer. <br>
 ![DFA Image](dfa_image.png)
-add DFA here
-
-1. When parsing the string from the start*  
 
 
 ## Team
