@@ -29,27 +29,24 @@ class LexerDfa:
       Token.append(self.cur_char)
       self.advance()
       if self.cur_char.isdigit() and int(self.cur_char) in range(1, 9):
-          #print(self.cur_char + "_22") 
           Token.append(self.cur_char)
           self.advance()
           if self.cur_char in "whqes":
               Token.append(self.cur_char)
               self.tokens.append(("NOTE", ''.join(Token)))  # End of Note Token
-              self.advance() # maybe leave the advance outside of the def 
-              # print("note_token_31")
+              self.advance() 
               return True  # Note parsed
           else:
             self.errors.append("Error: Invalid note token, missing duration w, h, q, e, s, default as w.")
             Token.append("w")
             self.tokens.append(("NOTE", ''.join(Token)))
-            self.advance() # maybe leave the advance outside of the def
+            self.advance() 
             return True  # Note parsed
-            # defaults as whole note if no duration is given
+            # Defaults as whole note if no duration is given
       elif self.cur_char == '9':
           self.errors.append(f"Error: Invalid octave number {self.cur_char}, default as octave 4.")
           Token.append("4")
           self.advance()
-          # print(self.cur_char + "42")
           if self.cur_char in "whqes":
               Token.append(self.cur_char)
               self.tokens.append(("NOTE", ''.join(Token)))
@@ -69,46 +66,41 @@ class LexerDfa:
           Token.append("4")
           self.tokens.append(("NOTE", ''.join(Token)))
           self.errors.append("Error: Invalid note token, missing octave number 1-8, default as octave 4.")
-          self.advance() # maybe leave the advance outside of the def
+          self.advance() 
           if self.cur_char in "whqes":
               Token.append(self.cur_char)
               self.tokens.append(("NOTE", ''.join(Token)))
               self.advance()
               return True
-              # defaults as octave 4 if no octave is given
-      return False  # Note not parsed * maybe print an error message
+      return False  # Note not found
     
   def variable_token(self): 
     # Handles DFA State for recognizing a Identity Token
     var_token = [self.prev_char]  # Initialize var_token with the previous character
-    # you can variable with assignment and variable without assignment 
+    # You can have a variable with assignment and variable without assignment 
     while self.cur_char is not None and self.cur_char in "abcdefghijklmnopqrstuvwxyz":
         var_token.append(self.cur_char)
         self.advance()
     self.tokens.append(("IDENTIFIER", ''.join(var_token)))
     if self.cur_char is not None and self.cur_char.isspace():
         self.advance()
-    if self.cur_char == "=": # then its being assigned to a note split this out
-        #print("equals")
+    if self.cur_char == "=": # Then its being assigned to a note
         self.tokens.append(("OPERATOR", "="))
         self.advance()
         if self.cur_char is not None and self.cur_char.isspace():
           self.advance()  
-          while self.cur_char is not None and self.cur_char in "ABCDEFG ": # this should be calling note_token i think
+          while self.cur_char is not None and self.cur_char in "ABCDEFG ": 
               if self.cur_char is not None and self.cur_char.isspace():
                   self.advance()
                   continue
               elif self.note_token():
-                  #print("variable note token")
                   continue
     else:
         return False
 
   def play_token(self): 
     # Handles DFA State for recognizing a Play Token
-    #print(self.cur_char)
     if self.cur_char == "p":
-    #   print("p")
       self.advance()
       if self.cur_char == "l":
         self.advance()
@@ -182,6 +174,7 @@ class LexerDfa:
          return True
 
   def end_bracket(self):
+      # Handles DFA state for recognizing the end bracket of a times token
       if self.cur_char == "}":
         self.tokens.append(("Keyword", "}")) # 
         self.advance()
@@ -194,7 +187,7 @@ class LexerDfa:
   def run(self):
     while self.cur_char is not None:
       if self.cur_char is not None and self.cur_char.isspace():
-        self.advance() # might go inside the note loop
+        self.advance() 
         continue 
       while self.cur_char is not None and self.cur_char in "ABCDEFGHIJKLMNOPQRSTUVWXYZ ": # 
         if self.cur_char is not None and self.cur_char.isspace():
@@ -205,17 +198,16 @@ class LexerDfa:
         else:
           break
 
-      if self.cur_char is not None and self.cur_char in "HIJKLMNOPQRSTUVWXYZ":  # this part is buggy can't handle Happy then Birthday 
+      if self.cur_char is not None and self.cur_char in "HIJKLMNOPQRSTUVWXYZ":  
         #This means its a variable token
         self.advance()
-        if self.variable_token(): # theres a bug here
+        if self.variable_token(): 
           continue
   
       elif self.play_token(): # play token
         continue
       
-      elif self.cur_char is not None and self.cur_char.isdigit(): # 5 Times KeywordToken /Integer 5 times { play (A4w) }
-        # print(f"Found digit: {self.cur_char}")
+      elif self.cur_char is not None and self.cur_char.isdigit(): 
         self.tokens.append(("INTEGER", self.cur_char))
         self.advance()
         if self.cur_char == "t":
@@ -253,20 +245,16 @@ class LexerDfa:
                     if self.cur_char is not None and self.cur_char.isspace():
                       self.advance()
                     elif self.cur_char == "{":
-                      # print("brace")
                       self.advance()
                       self.tokens.append(("Keyword", "{"))
                       if self.cur_char is not None and self.cur_char.isspace():
-                        # print("space")
                         self.advance()
                       elif self.play_token():
                          self.end_bracket()
                     else:
                         self.errors.append("Error: Invalid token, missing { in times token.")
                         self.tokens.append(("Keyword", "{"))
-                        #print("brace")
                         if self.cur_char is not None and self.cur_char.isspace():
-                          # print("space")
                           self.advance()
                         elif self.play_token(): 
                           self.end_bracket()
@@ -288,7 +276,7 @@ if len(sys.argv) != 2:
     
 type = sys.argv[1]
 if type == "1":
-    # run scanner and then run code
+    # Run scanner and then run code
     data = sys.stdin.readlines()
     data_string = "".join(data)
     runParser = LexerDfa(data_string) 
