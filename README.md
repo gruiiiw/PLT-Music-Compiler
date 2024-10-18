@@ -49,7 +49,7 @@ Rules: <br>
 
 Example Program: <br>
     Variable_name= A4w C2h B43  <br>
-    2times {play ( variable_name )}  <br>
+    2times {play ( Variable_name )}  <br>
 
 <br>
 
