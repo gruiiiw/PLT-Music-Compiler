@@ -75,14 +75,16 @@ When you are done entering your own input, to send the EOF, press control + d on
 
 ## Tests
 ### Test 1
-Input: <br>
+#### Please take a look at Music_Parser.py for full test descriptions and outputs 
 
-Thats= G4w That= G4h Me= B4h Espresso= C4q B4q B4 A4q 5times{play(Thats That Me Espresso A4w B3h G4w)}
+Input: <br>
+Thats= G4w That= G4h Me= B4h Espresso= C4q B4q B4w A4q <br>
+5times{play(Thats That Me Espresso A4w B3h G4w)}
 <br>
 Expected output:
 
 ```
- ('IDENTIFIER', 'Thats')
+    ('IDENTIFIER', 'Thats')
     ('OPERATOR', '=')
     ('NOTE', 'G4w')
     ('IDENTIFIER', 'That')
@@ -111,17 +113,15 @@ Expected output:
     ('NOTE', 'G4w')
     ('Delimiter', ')')
     ('Keyword', '}')
-    Errors encountered:
-    Error: Invalid note token, missing duration w, h, q, e, s, default as w.
-
 ```
 
 ### Test 2
 Input: <br>
-Is = A4w B3h It = B3h That= B3h G7h G4w Sweet= A4w B3h C4w 5times{pla(Is It That Sweet)} 
-
+Is = A4w B3h It = B3h That= B3h G7h <br>
+G4 <br>
+Sweet= A4w B3h C4w 5timespla(Is It That Sweet)}
 <br> Expected Output: 
-```
+```     
     ('IDENTIFIER', 'Is')
     ('OPERATOR', '=')
     ('NOTE', 'A4w')
@@ -151,7 +151,9 @@ Is = A4w B3h It = B3h That= B3h G7h G4w Sweet= A4w B3h C4w 5times{pla(Is It That
     ('Delimiter', ')')
     ('Keyword', '}')
     Errors encountered:
-    Error: Missing ( in play token.
+    Error: Invalid note token, missing duration w, h, q, e, s, default as w.
+    Error: Invalid token, missing { in times token.
+    Error: Missing y in play token.
 ```
 
 ### Test 3
@@ -230,16 +232,16 @@ play(A4w B3h G4w C4w D4w) Someone= D3h To= A4w B3h G4w C4w D4w Love= F3q playSom
 
 ### Test 5
 Input: <br>
-White= D4h Lips=D4h Pale= A4w Face= B4s
-Breathin= B4s C3q In= C3q The= D4q Snowflakes= C4q D4q
-Burnt= E4s F3s Lungs= F3s Sour= G3s Taste= G3s
-2time{play(White Lips Pale Face
-Breathin In The Snowflakes
-Burnt Lungs Sour Taste)}
+White= D4h Lips=D4h Pale= A4w Face= B4s <br>
+Breathin= B4s C3q In= C3q The= D4q Snowflakes= C4q D4q<br>
+Burnt= E4s F3s Lungs= F3s Sour= G3s Taste= G3s<br>
+2time{play(White Lips Pale Face<br>
+Breathin In The Snowflakes<br>
+Burnt Lungs Sour Taste)<br>
 
 <br> Expected Output: 
 ```
-     ('IDENTIFIER', 'White')
+    ('IDENTIFIER', 'White')
     ('OPERATOR', '=')
     ('NOTE', 'D4h')
     ('IDENTIFIER', 'Lips')
@@ -298,6 +300,7 @@ Burnt Lungs Sour Taste)}
     Errors encountered:
     Error: Invalid token, missing s in times token.
     Error: Invalid token, missing { in times token.
+    Error: Missing } in times token.
 ```
 
 ## Steps

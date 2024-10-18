@@ -583,7 +583,6 @@ else:
     ('IDENTIFIER', 'Sour')
     ('IDENTIFIER', 'Taste')
     ('Delimiter', ')')
-    ('Keyword', '}')
     Errors encountered:
     Error: Invalid token, missing s in times token.
     Error: Invalid token, missing { in times token.
