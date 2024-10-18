@@ -106,7 +106,7 @@ class LexerDfa:
 
   def play_token(self): 
     # Handles DFA State for recognizing a Play Token
-    # print(self.cur_char)
+    #print(self.cur_char)
     if self.cur_char == "p":
     #   print("p")
       self.advance()
@@ -138,6 +138,7 @@ class LexerDfa:
          if self.cur_char == ")":
             self.tokens.append(("Delimiter", ")"))
             self.advance()
+            # print("parenthesis2")
             return True
          else:
             # print(self.cur_char + "130")
@@ -231,12 +232,11 @@ class LexerDfa:
                       self.advance()
                     elif self.play_token():
                       # print("play token") 
-                      continue
-                    if self.cur_char == "}":
-                      self.tokens.append(("Keyword", "}")) #
-                      #print("brace2") 
-                      self.advance()
-                      # This is an accept state
+                      if self.cur_char == "}":
+                        self.tokens.append(("Keyword", "}")) #
+                        #print("brace2") 
+                        self.advance()
+                        # This is an accept state
                   else:
                     self.errors.append("Error: Invalid token, missing { in times token.")
                     self.tokens.append(("Keyword", "{"))
@@ -256,7 +256,7 @@ class LexerDfa:
                     self.tokens.append(("Keyword", "times"))
                     if self.cur_char is not None and self.cur_char.isspace():
                       self.advance()
-                    if self.cur_char == "{":
+                    elif self.cur_char == "{":
                       # print("brace")
                       self.advance()
                       self.tokens.append(("Keyword", "{"))
@@ -264,12 +264,10 @@ class LexerDfa:
                         # print("space")
                         self.advance()
                       elif self.play_token():
-                        # print("play token") 
-                        continue
-                      if self.cur_char == "}":
-                        self.tokens.append(("Keyword", "}")) #
-                        #print("brace2") 
-                        self.advance()
+                        if self.cur_char == "}":
+                          self.tokens.append(("Keyword", "}")) #
+                          #print("brace2") 
+                          self.advance()
                     else:
                         self.errors.append("Error: Invalid token, missing { in times token.")
                         self.tokens.append(("Keyword", "{"))
@@ -277,14 +275,12 @@ class LexerDfa:
                         if self.cur_char is not None and self.cur_char.isspace():
                           # print("space")
                           self.advance()
-                        elif self.play_token(): # this is the bug
-                          # print("play token") 
-                          continue
-                        if self.cur_char == "}":
-                          self.tokens.append(("Keyword", "}")) #
-                          #print("brace2") 
-                          self.advance()
-                          # This is an accept state
+                        elif self.play_token(): 
+                          if self.cur_char == "}":
+                            self.tokens.append(("Keyword", "}")) #
+                            #print("brace2") 
+                            self.advance()
+                            # This is an accept state
       else:
         return
     return
@@ -377,9 +373,10 @@ else:
     # Handles assigning multiple Identifiers, in different octaves and durations
     # Handles missing y in play token
     # Handles different spacing and new lines
+    # Handles missing { in times token
     lexer_DFA2 = LexerDfa("""Is = A4w B3h It = B3h That= B3h G7h 
                               G4w 
-                              Sweet= A4w B3h C4w 5times{pla(Is It That Sweet)}""")
+                              Sweet= A4w B3h C4w 5timespla(Is It That Sweet)}""")
     lexer_DFA2.run()
     tokens_2 = lexer_DFA2.get_tokens()
     errors_2 = lexer_DFA2.get_errors()
@@ -423,6 +420,7 @@ else:
     ('Delimiter', ')')
     ('Keyword', '}')
     Errors encountered:
+    Error: Invalid token, missing { in times token.
     Error: Missing ( in play token.
     '''
 
@@ -430,7 +428,7 @@ else:
     # Tests 5 notes to a single Identifier
     # Handles octave number error, 9 defaults to octave 4
     # Handles variables in [H-Z] then [A-G] then [H-Z]
-    lexer_DFA3 = LexerDfa("Happy= A4w Birthday= A4w A9h B4w A4w D4h To = A4w A4h B4w A4w You = D4w 5times{play(Birthday To You) }")
+    lexer_DFA3 = LexerDfa("Happy= A4w Birthday= A4w A9h B4w A4w D4h To = A4w A4h B4w A4w You = D4w 5times {play(Birthday To You)}")
     lexer_DFA3.run()
     tokens_3 = lexer_DFA3.get_tokens()
     errors_3 = lexer_DFA3.get_errors()
@@ -473,6 +471,7 @@ else:
     ('IDENTIFIER', 'To')
     ('IDENTIFIER', 'You')
     ('Delimiter', ')')
+    ('Keyword', '}')
     Errors encountered:
     Error: Invalid octave number 9, default as octave 4.
     '''
@@ -529,11 +528,11 @@ else:
     print("\n\n Test 5 \n\n")
     # Tests multiple lines of input
     # Tests missing s in times token
-    # Tests missing { in times token
+    # Missing { in times token
     lexer_DFA5 = LexerDfa("""White= D4h Lips=D4h Pale= A4w Face= B4s
                             Breathin= B4s C3q In= C3q The= D4q Snowflakes= C4q D4q
                             Burnt= E4s F3s Lungs= F3s Sour= G3s Taste= G3s
-                            2time{play(White Lips Pale Face
+                            2time play(White Lips Pale Face
                             Breathin In The Snowflakes
                             Burnt Lungs Sour Taste)}""")
     lexer_DFA5.run()
@@ -591,6 +590,7 @@ else:
     ('NOTE', 'G3s')
     ('INTEGER', '2')
     ('Keyword', 'times')
+    ('Keyword', '{')
     ('Keyword', 'play')
     ('Delimiter', '(')
     ('IDENTIFIER', 'White')
@@ -606,6 +606,7 @@ else:
     ('IDENTIFIER', 'Sour')
     ('IDENTIFIER', 'Taste')
     ('Delimiter', ')')
+    ('Keyword', '}')
     Errors encountered:
     Error: Invalid token, missing s in times token.
     Error: Invalid token, missing { in times token.
