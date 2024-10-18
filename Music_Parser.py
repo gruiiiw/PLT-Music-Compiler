@@ -108,7 +108,7 @@ class LexerDfa:
     # Handles DFA State for recognizing a Play Token
     # print(self.cur_char)
     if self.cur_char == "p":
-      print("p")
+    #   print("p")
       self.advance()
       if self.cur_char == "l":
         self.advance()
