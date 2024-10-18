@@ -183,12 +183,12 @@ class LexerDfa:
 
   def end_bracket(self):
       if self.cur_char == "}":
-        self.tokens.append(("Keyword", "}")) #
-        #print("brace2") 
+        self.tokens.append(("Keyword", "}")) # 
         self.advance()
         # This is an accept state
       else:
         self.errors.append("Error: Missing } in times token.")
+        # This is an error state
      
   # Ignore white space, but remember for variables, they should be on a new line when declared?
   def run(self):
@@ -232,7 +232,6 @@ class LexerDfa:
                   if self.cur_char is not None and self.cur_char.isspace():
                     self.advance()
                   if self.cur_char == "{":
-                    # print("brace")
                     self.advance()
                     self.tokens.append(("Keyword", "{"))
                     if self.cur_char is not None and self.cur_char.isspace():
