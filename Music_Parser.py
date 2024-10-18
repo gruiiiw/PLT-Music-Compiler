@@ -181,7 +181,15 @@ class LexerDfa:
          # self.advance()
          return True
 
-  
+  def end_bracket(self):
+      if self.cur_char == "}":
+        self.tokens.append(("Keyword", "}")) #
+        #print("brace2") 
+        self.advance()
+        # This is an accept state
+      else:
+        self.errors.append("Error: Missing } in times token.")
+     
   # Ignore white space, but remember for variables, they should be on a new line when declared?
   def run(self):
     while self.cur_char is not None:
@@ -231,31 +239,14 @@ class LexerDfa:
                       # print("space")
                       self.advance()
                     elif self.play_token():
-                      # print("play token") 
-                      if self.cur_char == "}":
-                        self.tokens.append(("Keyword", "}")) #
-                        #print("brace2") 
-                        self.advance()
-                        # This is an accept state
-                      else:
-                        self.errors.append("Error: Missing } in times token.")
-                        # error state
+                       self.end_bracket()
                   else:
                     self.errors.append("Error: Invalid token, missing { in times token.")
                     self.tokens.append(("Keyword", "{"))
                     if self.cur_char is not None and self.cur_char.isspace():
-                      # print("space")
                       self.advance()
                     elif self.play_token():
-                      #print("play token") 
-                      if self.cur_char == "}":
-                        self.tokens.append(("Keyword", "}")) #
-                        #print("brace2") 
-                        self.advance()
-                        # This is an accept state
-                      else: 
-                        self.errors.append("Error: Missing } in times token.")
-                        # error state
+                      self.end_bracket()
                 else:
                     self.errors.append("Error: Invalid token, missing s in times token.")
                     self.advance()
@@ -270,12 +261,7 @@ class LexerDfa:
                         # print("space")
                         self.advance()
                       elif self.play_token():
-                        if self.cur_char == "}":
-                          self.tokens.append(("Keyword", "}")) #
-                          #print("brace2") 
-                          self.advance()
-                        else:
-                          self.errors.append("Error: Missing } in times token.")
+                         self.end_bracket()
                     else:
                         self.errors.append("Error: Invalid token, missing { in times token.")
                         self.tokens.append(("Keyword", "{"))
@@ -284,13 +270,7 @@ class LexerDfa:
                           # print("space")
                           self.advance()
                         elif self.play_token(): 
-                          if self.cur_char == "}":
-                            self.tokens.append(("Keyword", "}")) #
-                            #print("brace2") 
-                            self.advance()
-                            # This is an accept state
-                          else:
-                            self.errors.append("Error: Missing } in times token.")
+                          self.end_bracket()
 
       else:
         return
