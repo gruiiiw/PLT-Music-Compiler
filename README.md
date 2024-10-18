@@ -304,6 +304,10 @@ Burnt Lungs Sour Taste)}
 Please refer to our DFA image for steps of the Lexer. <br>
 ![DFA Image](dfa_image.png)
 
+State S is our start state (in the middle). If we get A-G we can either have a variable name or note next. State 0 checks if the next number is a number, we have a note (go to state 1), if we get a-z we have a variable name (go to state 8). At state 1 (note) we need to see our length of note defined by one of whqes and this is a valid end state and we go back to the start state. From the start if we get H-Z we know we are at the start of a variable name, so we should get a-z next to be in state 8. In state 8 we stay here until we see an = sign. Then we move to assigning the variable to a note in state 9. State 10 continues to make sure it is a note and then we have described the possibilities for our captial letter start. <br> <br>
+If at the start state we get a p, we know we are going to see the 'play' keyword. We then must see the '(' char followed by either a NOTE described earlier, or a variable name also described earlier. At the end, we must see the closing ')'. Not depicted is that at this state we return to the start state. <br> <br>
+Finally, if at the start state we get an integer, we know we are going to have a loop. We read in the integer before moving on to the next state when we see the char t, which needs to follow into times. From there we have open brackets '{'. Here we can see the play keyword and loop described in the previous paragraph. Note that we have mechanisms in the code to ensure it ends with a "}". 
+
 
 ## Team
 Grace Dong grd2120 <br>
