@@ -316,10 +316,10 @@ if type == "1":
     
 else:
     print("\n Test 1 \n\n")
-    # This test shows the errors in the input string, when the note is missing a duration
     # This test shows multiple Identifiers being assigned to notes, and then played 5times in a play token
+    # No errors in this first test case
     # Test shows play accepts both variables and notes
-    lexer_Dfa1 = LexerDfa("""Thats= G4w That= G4h Me= B4h Espresso= C4q B4q B4 A4q
+    lexer_Dfa1 = LexerDfa("""Thats= G4w That= G4h Me= B4h Espresso= C4q B4q B4w A4q
                             5times{play(Thats That Me Espresso A4w B3h G4w)}""") 
     lexer_Dfa1.run()
     tokens_1 = lexer_Dfa1.get_tokens()
@@ -364,18 +364,16 @@ else:
     ('NOTE', 'G4w')
     ('Delimiter', ')')
     ('Keyword', '}')
-    Errors encountered:
-    Error: Invalid note token, missing duration w, h, q, e, s, default as w.
     '''
 
-        
     print("\n\n Test 2 \n\n")
     # Handles assigning multiple Identifiers, in different octaves and durations
     # Handles missing y in play token
+    # Handes missing note duration, defaults to whole note (G4)
     # Handles different spacing and new lines
     # Handles missing { in times token
     lexer_DFA2 = LexerDfa("""Is = A4w B3h It = B3h That= B3h G7h 
-                              G4w 
+                              G4 
                               Sweet= A4w B3h C4w 5timespla(Is It That Sweet)}""")
     lexer_DFA2.run()
     tokens_2 = lexer_DFA2.get_tokens()
@@ -420,6 +418,7 @@ else:
     ('Delimiter', ')')
     ('Keyword', '}')
     Errors encountered:
+    Error: Invalid note token, missing duration w, h, q, e, s, default as w.
     Error: Invalid token, missing { in times token.
     Error: Missing ( in play token.
     '''
