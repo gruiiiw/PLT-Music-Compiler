@@ -237,6 +237,9 @@ class LexerDfa:
                         #print("brace2") 
                         self.advance()
                         # This is an accept state
+                      else:
+                        self.errors.append("Error: Missing } in times token.")
+                        # error state
                   else:
                     self.errors.append("Error: Invalid token, missing { in times token.")
                     self.tokens.append(("Keyword", "{"))
@@ -250,6 +253,9 @@ class LexerDfa:
                         #print("brace2") 
                         self.advance()
                         # This is an accept state
+                      else: 
+                        self.errors.append("Error: Missing } in times token.")
+                        # error state
                 else:
                     self.errors.append("Error: Invalid token, missing s in times token.")
                     self.advance()
@@ -268,6 +274,8 @@ class LexerDfa:
                           self.tokens.append(("Keyword", "}")) #
                           #print("brace2") 
                           self.advance()
+                        else:
+                          self.errors.append("Error: Missing } in times token.")
                     else:
                         self.errors.append("Error: Invalid token, missing { in times token.")
                         self.tokens.append(("Keyword", "{"))
@@ -281,6 +289,9 @@ class LexerDfa:
                             #print("brace2") 
                             self.advance()
                             # This is an accept state
+                          else:
+                            self.errors.append("Error: Missing } in times token.")
+
       else:
         return
     return
@@ -533,7 +544,7 @@ else:
                             Burnt= E4s F3s Lungs= F3s Sour= G3s Taste= G3s
                             2time play(White Lips Pale Face
                             Breathin In The Snowflakes
-                            Burnt Lungs Sour Taste)}""")
+                            Burnt Lungs Sour Taste)""")
     lexer_DFA5.run()
     tokens_5 = lexer_DFA5.get_tokens()
     errors_5 = lexer_DFA5.get_errors()
@@ -609,6 +620,7 @@ else:
     Errors encountered:
     Error: Invalid token, missing s in times token.
     Error: Invalid token, missing { in times token.
+    Error: Missing } in times token.
     '''
 
     
